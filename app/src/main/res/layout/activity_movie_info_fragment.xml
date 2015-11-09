@@ -1,0 +1,249 @@
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/info_scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">-
+
+    <RelativeLayout
+
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/gate_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"
+            android:text="gate"
+            android:textSize="16sp"
+            android:textColor="@android:color/secondary_text_dark"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/length_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="3dp"
+            android:text="length"
+            android:textSize="16sp"
+            android:textColor="@android:color/secondary_text_dark"
+            android:textStyle="bold"/>
+
+
+        <FrameLayout
+            android:id="@+id/story_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_below="@+id/length_text">
+
+            <TextView
+                android:id="@+id/story_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:ellipsize="end"
+                android:fadingEdge="vertical"
+                android:fadingEdgeLength="30dp"
+                android:maxLines="3"
+                android:text="story"
+                android:textColor="@android:color/primary_text_light_nodisable"
+                android:textSize="16sp"
+                android:lineSpacingExtra="3dp"/>
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/story_under_line"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/story_layout"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:scaleType="fitXY"
+            android:src="@android:drawable/divider_horizontal_dim_dark" />
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/info_mv_pic"
+            android:layout_width="155dp"
+            android:layout_height="222dp"
+            android:layout_below="@+id/story_layout"
+            android:layout_margin="20dp"
+            android:focusableInTouchMode="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mm_logo" />
+
+        <FrameLayout
+            android:id="@+id/right_of_pic_layout"
+            android:layout_width="155dp"
+            android:layout_height="222dp"
+            android:layout_alignTop="@+id/info_mv_pic"
+            android:layout_toRightOf="@+id/info_mv_pic">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/playdate_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/playing_time"
+                    android:textColor="@android:color/primary_text_light_nodisable"
+                    android:textSize="16sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/playdate_value_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/playdate_text"
+                    android:text="2015/10/20"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/primary_text_light_nodisable"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"/>
+
+                <ImageButton
+                    android:id="@+id/IMDb_img"
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
+                    android:layout_below="@+id/playdate_value_text"
+                    android:background="@drawable/imdb_icon"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="5dp"
+                    />
+
+                <TextView
+                    android:id="@+id/IMDbRating_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/IMDb_img"
+                    android:text="0.0/10"
+                    android:layout_alignTop="@+id/IMDb_img"
+                    android:textColor="@android:color/primary_text_light_nodisable"
+                    android:textSize="16sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"/>
+
+                <ImageButton
+                    android:id="@+id/tomato_img"
+                    android:layout_width="37dp"
+                    android:layout_height="37dp"
+                    android:layout_below="@+id/IMDb_img"
+                    android:paddingLeft="3dp"
+                    android:background="@drawable/tomato_icon"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="5dp"
+                  />
+
+                <TextView
+                    android:id="@+id/tomatoRating_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tomato_img"
+                    android:layout_alignTop="@+id/tomato_img"
+                    android:text="00 ％"
+                    android:layout_alignBaseline="@+id/tomato_img"
+                    android:textColor="@android:color/primary_text_light_nodisable"
+                    android:textSize="16sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"/>
+
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/pic_under_line"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/info_mv_pic"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:scaleType="fitXY"
+            android:src="@android:drawable/divider_horizontal_dim_dark" />
+
+        <TextView
+            android:id="@+id/director_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pic_under_line"
+            android:text="@string/director"
+            android:textColor="@android:color/primary_text_light_nodisable"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/director_value_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/director_text"
+            android:text="jasper"
+            android:textColor="@android:color/primary_text_light_nodisable"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"/>
+
+        <TextView
+            android:id="@+id/writer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/director_value_text"
+            android:text="@string/writer"
+            android:textColor="@android:color/primary_text_light_nodisable"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/writer_value_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/writer_text"
+            android:text="jasper"
+            android:textColor="@android:color/primary_text_light_nodisable"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"/>
+
+        <TextView
+            android:id="@+id/actor_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/writer_value_text"
+            android:text="@string/actor"
+            android:textColor="@android:color/primary_text_light_nodisable"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/actor_value_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/actor_text"
+            android:text="jasper"
+            android:textColor="@android:color/primary_text_light_nodisable"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="3dp"/>
+
+
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>

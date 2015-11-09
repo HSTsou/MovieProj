@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">MovingMovie</string>
+
+    <string name="error_init_failure">Initialization failure: Unable to play video</string>
+    <string name="refresh">refresh</string>
+    <string name="txt_yo_yo">hihi</string>
+    <string name="DEVELOPER_KEY">AIzaSyBqljpgNw5wdfPaF62DV9RJtwVNt8kAZYg</string>
+    <string name="first_run">首輪</string>
+    <string name="this_week">本週新片</string>
+    <string name="second_run">二輪</string>
+    <string name="not_yet">未來</string>
+    <string name="movie_time">時刻</string>
+    <string name="movie_info">資訊</string>
+    <string name="movie">電影</string>
+    <string name="theater">戲院</string>
+    <string name="collection">收藏</string>
+    <string name="playing_time">上映日期</string>
+    <string name="director">導演</string>
+    <string name="actor">演員</string>
+    <string name="writer">編劇</string>
+    <string name="plz_open_net_gps">請檢查網路或開啟GPS</string>
+    <string name="cal_distance_ing">計算距離中</string>
+    <string name="navigation">導航</string>
+</resources>

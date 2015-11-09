@@ -1,0 +1,76 @@
+<com.example.handsome.thenewtest.util.CustomCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginTop="4dp"
+    app:cardCornerRadius="5dp"
+    >
+
+    <RelativeLayout
+        android:id="@+id/text_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+
+       <!-- <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/mv_pic"
+            android:layout_width="85dp"
+            android:layout_height="120dp"
+
+            android:layout_alignParentLeft="true"
+            android:padding="10dp"
+            android:layout_marginLeft="30dp"
+             />-->
+
+        <TextView
+            android:id="@+id/mvName_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="?android:listPreferredItemPaddingLeft"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="19sp"
+            tools:text="name"/>
+
+        <TextView
+            android:id="@+id/version_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mvName_text"
+            android:fontFamily="sans-serif-light"
+            android:paddingLeft="?android:listPreferredItemPaddingLeft"
+            android:textColor="@android:color/secondary_text_dark_nodisable"
+            android:textSize="17sp"
+
+            android:layout_centerHorizontal="true"
+            tools:text="Item" />
+
+        <ImageView
+            android:id="@+id/under_line"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/version_text"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:scaleType="fitXY"
+            android:src="@android:drawable/divider_horizontal_dim_dark" />
+
+        <TableLayout
+            android:id="@+id/time_table_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/under_line"
+             ></TableLayout>
+    </RelativeLayout>
+
+
+</com.example.handsome.thenewtest.util.CustomCardView>
+
