@@ -84,8 +84,6 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        prefHelper = new SharedPreferencesHelper(this);
-
         Bundle bundle = this.getIntent().getExtras();
         areaId = (String) bundle.get("areaId");
         areaName = (String) bundle.get("areaName");
@@ -340,17 +338,9 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         progressDialog.show();
         thread.start();
     }
-
-    public void setArea() {
-        area = prefHelper.getArea();
-        if (area == null) {
-            area = "0"; // Taipei
-        }
-    }
-
     private void load() {
 
-        setArea();
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
             data = loadTheaters(db);
@@ -379,20 +369,13 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 Log.i("hs", "position = " + position);
                 // Log.i("hs", "item = " + allData.get(position));
-                String thName = data.get(position).get(DBConstants.THEATER.NAME);
-                String address = data.get(position).get(DBConstants.THEATER.ADDRESS);
-                String distance = data.get(position).get("distance");
-                String lat = data.get(position).get(DBConstants.THEATER.LAT);
-                String lng = data.get(position).get(DBConstants.THEATER.LNG);
+
                 String thId =  data.get(position).get(DBConstants.THEATER.ID);
                 Intent i = new Intent();
                 i.setClass(context, TheaterInfoActivity.class);
-                i.putExtra("thName", thName);
-                i.putExtra("address", address);
-                i.putExtra("distance", distance);
+
                 i.putExtra("thId", thId);
-                i.putExtra("lat", lat);
-                i.putExtra("lng", lng);
+
                 startActivity(i);
             }
         });

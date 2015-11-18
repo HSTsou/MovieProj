@@ -53,11 +53,22 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         String enName = mvItem.getEnName();
         String playingDate = mvItem.getPlayingDate();
         double IMDbRating = mvItem.getIMDbRating();
+        double tomatoesRating = mvItem.getTomatoesRating();
         String imgUrl = mvItem.getImgLink();
 
         viewHolder.mvName_text.setText(mvName);
         viewHolder.enName_text.setText(enName);
-        viewHolder.IMDbRating_text.setText(String.valueOf(IMDbRating));
+        if(IMDbRating == 0){
+            viewHolder.IMDbRating_text.setText(" --");
+        }else{
+            viewHolder.IMDbRating_text.setText(String.valueOf(IMDbRating));
+        }
+        if(tomatoesRating == 0){
+            viewHolder.tomatoesRating_text.setText(" --");
+        }else{
+            viewHolder.tomatoesRating_text.setText(String.valueOf((int)tomatoesRating)+"%");
+        }
+
         viewHolder.playingDate_text.setText(playingDate);
         viewHolder.mv_pic.setImageUrl(imgUrl, imageLoader);
     }
@@ -72,6 +83,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         TextView mvName_text;
         TextView enName_text;
         TextView playingDate_text;
+        TextView tomatoesRating_text;
         TextView IMDbRating_text;
         NetworkImageView mv_pic;
 
@@ -83,6 +95,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
             enName_text = (TextView) itemView.findViewById(R.id.enName_text);
             playingDate_text = (TextView) itemView.findViewById(R.id.playingDate_text);
             IMDbRating_text = (TextView) itemView.findViewById(R.id.IMDbRating_text);
+            tomatoesRating_text =  (TextView) itemView.findViewById(R.id.tomato_text);
 
             mvName_text.setOnClickListener(new View.OnClickListener() {
 

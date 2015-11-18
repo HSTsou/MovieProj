@@ -28,11 +28,18 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public  RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        view = LayoutInflater.from(context).inflate(R.layout.content_movietime, parent, false);
+        if(mtList.size()>0){
+            view = LayoutInflater.from(context).inflate(R.layout.content_movietime, parent, false);
+            return new RecyclerItemViewHolder(view);
+        }else{
+            view = LayoutInflater.from(context).inflate(R.layout.content_no_time, parent, false);
+            return null;
+        }
 
-        return new RecyclerItemViewHolder(view);
+
+
     }
 
     @Override
@@ -41,20 +48,17 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         MovieTime mt = mtList.get(position);
 
-        holder.thName.setText(mt.getThName());
-        holder.hallName.setText(mt.getHall());
-       // holder.time.setText(mt.getTimeStr());
-
-
-        //int count = holder.stLayout.getChildCount();
-       /* for (int i = 0; i < count; i++) {
-            View child = holder.stLayout.getChildAt(i);
-            if (child instanceof TableRow) ((ViewGroup) child).removeAllViews();
-        }*/
-        //if(!(count>0)){
-           // Log.i("hs", "mt.getThName() = " +mt.getThName()+"count = " + count);
-            holder.stLayout.removeAllViews();
+        if(mt != null){
+            holder.thName.setText(mt.getThName());
+            holder.hallName.setText(mt.getHall());
+            // holder.time.setText(mt.getTimeStr());
+            holder.stLayout.removeAllViews();//According to the below,to avoid reinsert the time layout.
             holder.stLayout.addView(setTimeText(mt.getTimeStr()));
+        }else{
+
+        }
+
+
 
     }
 
@@ -83,11 +87,14 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    public View setTimeText( String  text) {
+    public View setTimeText(String text) {
+
         TableLayout stLayout = new TableLayout(view.getContext());
-        if(text != null){
-            TableRow tableRow  = new TableRow(view.getContext());
+        if (text != null) {
+            TableRow tableRow = new TableRow(view.getContext());
             tableRow.setGravity(Gravity.CENTER_HORIZONTAL);
+
+            text = text.replaceAll("：", ":");
             String[] timeStr = text.split("\\s");
             int record = 0;
             for (int x = 0; x < timeStr.length; x++) {
@@ -95,10 +102,10 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 final Button timeButton = new Button(view.getContext());
                 timeButton.setText(time);
-                timeButton.setPadding(12, 5, 12,  5);
+                timeButton.setPadding(12, 0, 12, 0);
                 // timeButton.setTextColor(R.color.black);
                 timeButton.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.transparent));
-                timeButton.setTypeface(Typeface.SANS_SERIF );
+                timeButton.setTypeface(Typeface.SERIF);
                 /*
                 if (isAvaliable) {
                     // same day
@@ -112,8 +119,8 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 record++;
                 if (record % 4 == 0 && record != 0) {
-                    if(tableRow.getParent()!=null){
-                        ((ViewGroup)tableRow.getParent()).removeView(tableRow );
+                    if (tableRow.getParent() != null) {
+                        ((ViewGroup) tableRow.getParent()).removeView(tableRow);
                     }
                     stLayout.addView(tableRow);
                     tableRow = new TableRow(view.getContext());
@@ -121,17 +128,15 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
             if (record % 4 != 0 && record != 0) {
-                if(tableRow.getParent()!=null){
-                    ((ViewGroup)tableRow.getParent()).removeView(tableRow );
+                if (tableRow.getParent() != null) {
+                    ((ViewGroup) tableRow.getParent()).removeView(tableRow);
                 }
                 stLayout.addView(tableRow);
 
             }
         }
-    return stLayout;
+        return stLayout;
     }
-
-
 
 
 }

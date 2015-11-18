@@ -9,8 +9,33 @@ import java.util.List;
  * Created by handsome on 2015/9/16.
  */
 public class Movie implements Parcelable {
+    public Movie(){
+
+    }
+
+
+
+    private String gaeId;
+    private String state;
+    private String atMoviesMvId;
+    private String mvName;
+    private String enName;
+    private String mvlength = null;
+    private String playingDate = null;
+    private String gate;
+    private String imgLink;
+    private String director = null;
+    private String writer = null;
+    private String actor = null;
+    private String story = null;//in GAE, the attribute of story is Text which store more String data in GAE.
+    private String mv_IMDbMoblieUrl;
+    private String mv_TomatoesMoblieUrl;
+    private List<String> youtubeUrlList;
+    private Double IMDbRating;
+    private Double tomatoesRating;
 
     protected Movie(Parcel in) {
+        gaeId = in.readString();
         state = in.readString();
         atMoviesMvId = in.readString();
         mvName = in.readString();
@@ -18,15 +43,15 @@ public class Movie implements Parcelable {
         mvlength = in.readString();
         playingDate = in.readString();
         gate = in.readString();
-        story = in.readString();
         imgLink = in.readString();
         director = in.readString();
         writer = in.readString();
         actor = in.readString();
-        IMDbMvId = in.readString();
+        story = in.readString();
         mv_IMDbMoblieUrl = in.readString();
+        mv_TomatoesMoblieUrl = in.readString();
+        youtubeUrlList = in.createStringArrayList();
         allMvThShowtimeList = in.createStringArrayList();
-
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -41,6 +66,14 @@ public class Movie implements Parcelable {
         }
     };
 
+    public String getGaeId() {
+        return gaeId;
+    }
+
+    public void setGaeId(String gaeId) {
+        this.gaeId = gaeId;
+    }
+
     public String getState() {
         return state;
     }
@@ -48,14 +81,6 @@ public class Movie implements Parcelable {
     public void setState(String state) {
         this.state = state;
     }
-
-    private String state;
-    private String atMoviesMvId;
-    private String mvName;
-    private String enName;
-    private String mvlength = null;
-    private String playingDate = null;
-    private String gate;
 
     public String getAtMoviesMvId() {
         return atMoviesMvId;
@@ -121,6 +146,14 @@ public class Movie implements Parcelable {
         this.director = director;
     }
 
+    public String getWriter() {
+        return writer;
+    }
+
+    public void setWriter(String writer) {
+        this.writer = writer;
+    }
+
     public String getActor() {
         return actor;
     }
@@ -137,14 +170,6 @@ public class Movie implements Parcelable {
         this.story = story;
     }
 
-    public String getIMDbMvId() {
-        return IMDbMvId;
-    }
-
-    public void setIMDbMvId(String IMDbMvId) {
-        this.IMDbMvId = IMDbMvId;
-    }
-
     public String getMv_IMDbMoblieUrl() {
         return mv_IMDbMoblieUrl;
     }
@@ -153,12 +178,12 @@ public class Movie implements Parcelable {
         this.mv_IMDbMoblieUrl = mv_IMDbMoblieUrl;
     }
 
-    public boolean isThisWeek() {
-        return isThisWeek;
+    public String getMv_TomatoesMoblieUrl() {
+        return mv_TomatoesMoblieUrl;
     }
 
-    public void setIsThisWeek(boolean isThisWeek) {
-        this.isThisWeek = isThisWeek;
+    public void setMv_TomatoesMoblieUrl(String mv_TomatoesMoblieUrl) {
+        this.mv_TomatoesMoblieUrl = mv_TomatoesMoblieUrl;
     }
 
     public List<String> getYoutubeUrlList() {
@@ -169,20 +194,20 @@ public class Movie implements Parcelable {
         this.youtubeUrlList = youtubeUrlList;
     }
 
-    public boolean isOut() {
-        return isOut;
-    }
-
-    public void setIsOut(boolean isOut) {
-        this.isOut = isOut;
-    }
-
     public Double getIMDbRating() {
         return IMDbRating;
     }
 
     public void setIMDbRating(Double IMDbRating) {
         this.IMDbRating = IMDbRating;
+    }
+
+    public Double getTomatoesRating() {
+        return tomatoesRating;
+    }
+
+    public void setTomatoesRating(Double tomatoesRating) {
+        this.tomatoesRating = tomatoesRating;
     }
 
     public List<String> getAllMvThShowtimeList() {
@@ -193,31 +218,7 @@ public class Movie implements Parcelable {
         this.allMvThShowtimeList = allMvThShowtimeList;
     }
 
-    private String imgLink;
-
-    public String getWriter() {
-        return writer;
-    }
-
-    public void setWriter(String writer) {
-        this.writer = writer;
-    }
-
-    private String director = null;
-    private String writer = null;
-    private String actor = null;
-    private String story = null;//in GAE, the attribute of story is Text which store more String data in GAE.
-    private String IMDbMvId = null;
-    private String mv_IMDbMoblieUrl;
-    private boolean isThisWeek;
-    private List<String> youtubeUrlList;
-    private boolean isOut;
-    private Double IMDbRating;
     private List<String> allMvThShowtimeList;
-
-    public Movie() {
-
-    }
 
 
     @Override
@@ -226,21 +227,23 @@ public class Movie implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(state);
-        parcel.writeString(atMoviesMvId);
-        parcel.writeString(mvName);
-        parcel.writeString(enName);
-        parcel.writeString(mvlength);
-        parcel.writeString(playingDate);
-        parcel.writeString(gate);
-        parcel.writeString(story);
-        parcel.writeString(imgLink);
-        parcel.writeString(director);
-        parcel.writeString(writer);
-        parcel.writeString(actor);
-        parcel.writeString(IMDbMvId);
-        parcel.writeString(mv_IMDbMoblieUrl);
-        parcel.writeStringList(allMvThShowtimeList);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(gaeId);
+        dest.writeString(state);
+        dest.writeString(atMoviesMvId);
+        dest.writeString(mvName);
+        dest.writeString(enName);
+        dest.writeString(mvlength);
+        dest.writeString(playingDate);
+        dest.writeString(gate);
+        dest.writeString(imgLink);
+        dest.writeString(director);
+        dest.writeString(writer);
+        dest.writeString(actor);
+        dest.writeString(story);
+        dest.writeString(mv_IMDbMoblieUrl);
+        dest.writeString(mv_TomatoesMoblieUrl);
+        dest.writeStringList(youtubeUrlList);
+        dest.writeStringList(allMvThShowtimeList);
     }
 }

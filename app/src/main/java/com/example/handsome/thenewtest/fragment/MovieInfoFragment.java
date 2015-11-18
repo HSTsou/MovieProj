@@ -1,7 +1,6 @@
 package com.example.handsome.thenewtest.fragment;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,23 +13,26 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.example.handsome.thenewtest.util.AppController;
-import com.example.handsome.thenewtest.helper.ButtonHighlighterOnTouchListener;
-import com.example.handsome.thenewtest.entity.Movie;
 import com.example.handsome.thenewtest.R;
+import com.example.handsome.thenewtest.WebActivity;
+import com.example.handsome.thenewtest.entity.Movie;
+import com.example.handsome.thenewtest.helper.ButtonHighlighterOnTouchListener;
+import com.example.handsome.thenewtest.util.AppController;
 
 /**
  * Created by handsome on 2015/10/18.
  */
 public class MovieInfoFragment extends Fragment implements View.OnClickListener {
 
-    TextView gate , story, length, director, actor, writer, playingDate;
+    TextView gate, story, length, director, actor, writer, playingDate, enName;
     NetworkImageView pic;
     Boolean isTextViewClicked = false;
     ImageButton IMDb_btn, Tomato_btn;
-    TextView IMDbRating,tomatoRating;
-
+    TextView IMDbRating, tomatoRating;
+    Movie mv;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    String IMDbUrl, tomatoesUrl;
+
     public static MovieInfoFragment createInstance(Movie m) {
         Log.i("hs", "createInstance ");
         MovieInfoFragment f = new MovieInfoFragment();
@@ -52,6 +54,7 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.i("hs", "onViewCreated");
+        enName =  (TextView) view.findViewById(R.id.enName_text);
         gate = (TextView) view.findViewById(R.id.gate_text);
         story = (TextView) view.findViewById(R.id.story_text);
         story.setOnClickListener(this);
@@ -83,18 +86,70 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
         Bundle bundle = getArguments();
 
         if (bundle != null) {
-            Movie mv = bundle.getParcelable("movie");
-            gate.setText(mv.getGate());
-            story.setText(mv.getStory());
+            mv = bundle.getParcelable("movie");
+            enName.setText(mv.getEnName());
+            if(mv.getGate() != null){
+                gate.setText(transGateToChinese(mv.getGate()));
+            }
+
+            if (mv.getStory().length() > 10){
+                story.setText(mv.getStory().substring(10, mv.getStory().length() - 2));//{"value":"XXXXXXX"}
+            }
+
             pic.setImageUrl(mv.getImgLink(), imageLoader);
             length.setText(mv.getMvlength());
             playingDate.setText(mv.getPlayingDate());
             director.setText(mv.getDirector());
             actor.setText(mv.getActor());
             writer.setText(mv.getWriter());
-            tomatoRating.setText(String.valueOf(mv.getIMDbRating()));
+
+            if(mv.getIMDbRating() == 0){
+                IMDbRating.setText("--");
+            }else{
+                IMDbRating.setText(String.valueOf(mv.getIMDbRating()));
+            }
+
+            if(mv.getTomatoesRating() == 0){
+                tomatoRating.setText("--");
+            }else{
+                tomatoRating.setText(String.valueOf(mv.getTomatoesRating())+"%");
+            }
+
+            IMDbUrl = mv.getMv_IMDbMoblieUrl();
+            tomatoesUrl = mv.getMv_TomatoesMoblieUrl();
+
 
         }
+
+    }
+
+    String transGateToChinese(String gate) {
+
+        switch (gate) {
+            case "G":
+                gate = "普遍級 G";
+                break;
+            case "P":
+                gate = "保護級 P";
+                break;
+            case "PG":
+                gate = "輔導級 PG";
+                break;
+            case "R":
+                gate = "限制級 R";
+                break;
+            case "F2":
+                gate = "輔導級 12+";
+                break;
+            case "F5":
+                gate = "輔導級 15+";
+                break;
+
+            default:
+
+                break;
+        }
+        return gate;
 
     }
 
@@ -102,8 +157,8 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.story_text:
-
-                if(isTextViewClicked){
+                //story text expanded and collapsed.
+                if (isTextViewClicked) {
                     //This will shrink textview to 3 lines if it is expanded.
                     story.setMaxLines(3);
                     isTextViewClicked = false;
@@ -114,19 +169,29 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
                 }
                 break;
 
-            case R.id.tomato_img:
-
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.imdb.com/title/tt2361509/"));
-                startActivity(intent);
-                break;
             case R.id.IMDb_img:
-
-                Intent imdb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.imdb.com/title/tt2361509/"));
-                startActivity(imdb);
+                if(IMDbUrl != null && IMDbUrl.contains("imdb")){
+                    Intent web = new Intent(getActivity(), WebActivity.class);
+                    web.putExtra("url", IMDbUrl);
+                    startActivity(web);
+                }
                 break;
+
+            case R.id.tomato_img:
+                if(tomatoesUrl != null&&  tomatoesUrl.contains("rottentomatoes")){
+
+                    Intent web = new Intent(getActivity(), WebActivity.class);
+                    web.putExtra("url", tomatoesUrl);
+                    startActivity(web);
+                }
+                break;
+
+
             default:
 
                 break;
         }
     }
+
+
 }

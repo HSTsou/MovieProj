@@ -1,8 +1,11 @@
 package com.example.handsome.thenewtest;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,21 +24,34 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.handsome.thenewtest.entity.Movie;
 import com.example.handsome.thenewtest.fragment.MovieInfoFragment;
 import com.example.handsome.thenewtest.fragment.MovieTimeTabFragment;
+import com.example.handsome.thenewtest.helper.DatabaseHelper;
+import com.example.handsome.thenewtest.helper.JSONHelper;
 import com.example.handsome.thenewtest.util.AppController;
 import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MovieInfoActivity extends AppCompatActivity {
 
+    static final String MV_INFO_URL = "https://movingmoviezero.appspot.com/mvInfo?id=";
     CoordinatorLayout rootLayout;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
@@ -46,37 +62,188 @@ public class MovieInfoActivity extends AppCompatActivity {
     NetworkImageView mv_pic;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     String title, url;
+    DatabaseHelper helper ;
+    SQLiteDatabase db;
+
     private YouTubePlayerView playerView;
     Context c;
-    public static final String VIDEO_ID = "o7VVHhK9zf0";
+
     Movie m;
+    String mvId;//accurately,  gatId of movie
+    String youtubeThumbnail_Url = "http://img.youtube.com/vi/%s/0.jpg"; //0 : larger img, 1,2,3 different image but small.
+    String vId ="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_info);
         c = this;
-        m = getIntent().getParcelableExtra("movie");
-        Log.i("hs", "name = " + m.getMvName() + " url" + m.getImgLink());
-        title = m.getMvName();
-        url = m.getImgLink();
-        initInstances();
+        helper = new DatabaseHelper(this);
+        db = helper.getWritableDatabase();
+
+        mvId = getIntent().getStringExtra("mvId");
+        getMovieInfoByJson();
+        initNavigation();
+
 
         //YouTubeFragment fragment = (YouTubeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_youtube);
         //fragment.setVideoId("VxJsGKn2kyA");
     }
 
+    void parseMvInfoJsonAndStore(JSONObject response){
+        Log.i("hs", "parseMvInfoJsonAndStore");
+
+            try {
+                JSONObject obj = response;
+
+                ContentValues cv = new ContentValues();
+
+                String GAEId = obj.getJSONObject("key").getString("id");
+                cv.put(DBConstants.MOVIE.ID, GAEId);
+
+                for(String unit : DatabaseHelper.COL_MOVIE){
+                    if(!obj.isNull(unit)){
+                        if(unit == "playingDate"){
+                            String formatPlayingDate = obj.getString(unit).replaceAll("/", "-");
+                            cv.put(unit, formatPlayingDate);
+                            continue;
+                        }
+                        cv.put(unit, obj.getString(unit));
+                    }else{
+                        cv.putNull(unit);
+                    }
+                }
+
+                Gson gson = new Gson();
+                if(!obj.isNull(DBConstants.MOVIE.YOUTUBE_URL_LIST)){
+                    String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.YOUTUBE_URL_LIST)));
+                    cv.put(DBConstants.MOVIE.YOUTUBE_URL_LIST, youtubeListString);
+                }
+                if(!obj.isNull(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)) {
+                    String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)));
+                    cv.put(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
+                }
+
+                helper.insertMovieInfo(db, cv);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.i("hs", " getAllMvInfo JSONException" + e);
+
+            }
+
+
+    }
+
+
+    void getMovieInfoByJson(){
+
+        JsonObjectRequest req = new JsonObjectRequest(MV_INFO_URL + mvId,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Log.i(TAG, response.toString());
+                        parseMvInfoJsonAndStore(response);
+
+                        m = loadMvInfoFromDB(mvId);
+                        title = m.getMvName();
+                        url = m.getImgLink();
+
+                        initInstances();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // VolleyLog.d(TAG, "Error: " + error.getMessage());
+                Log.i("hs", "Error = " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+
+        AppController.getInstance().addToRequestQueue(req);
+    }
+
+    public Movie loadMvInfoFromDB(String mvId){
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        Movie mv;
+        Cursor c = helper.getMovieInfoByAtsMovieId(db, mvId);
+        try {
+            c.moveToFirst();
+            mv = new Movie();
+            mv.setPlayingDate(c.getString(1));
+            mv.setMvName(c.getString(2));
+            mv.setEnName(c.getString(3));
+            mv.setGate(c.getString(4));
+            mv.setImgLink(c.getString(5));
+            mv.setMvlength(c.getString(6));
+            mv.setDirector(c.getString(7));
+            mv.setActor(c.getString(8));
+            mv.setStory(c.getString(9));
+            mv.setWriter(c.getString(10));
+            mv.setState(c.getString(11));
+            mv.setMv_IMDbMoblieUrl(c.getString(12));
+            mv.setMv_TomatoesMoblieUrl(c.getString(13));
+            mv.setIMDbRating(Double.parseDouble(c.getString(14)));
+            mv.setTomatoesRating(Double.parseDouble(c.getString(15)));
+
+
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<String>>() {}.getType();
+            List<String> mvTimeInfoStr_List = gson.fromJson(c.getString(16), type);
+            List<String> youtube_List = gson.fromJson(c.getString(17), type);
+            mv.setAllMvThShowtimeList(mvTimeInfoStr_List);
+            mv.setYoutubeUrlList(youtube_List);
+
+        } finally {
+            c.close();
+            db.close();
+        }
+
+        return mv;
+    }
+
     private void initInstances() {
-        initNavigation();
+
+
+        List<String> utubeUrlList = m.getYoutubeUrlList();
+
+        String utubeUrl;
+        if(utubeUrlList.size() >0){
+            /*for(String url : utubeUrlList){
+                JSONObject obj = new JSONObject(url);//in the GAE, if using TEXT type, it will return redundant {"value":"XXXX"}..mabye...
+                utubeUrl =  obj.getString("value");
+                Log.i("hs", "UtubeUrl = " +  obj.getString("value"));
+            }*/
+
+            try{
+                JSONObject obj = new JSONObject(utubeUrlList.get(0));
+                utubeUrl =  obj.getString("value");
+                vId = utubeUrl.substring(utubeUrl.lastIndexOf("/")+1);//ex: "https://www.youtube.com/embed/2S05N0PYYas"
+            }catch(JSONException e){
+                Log.i("hs", "utubeUrl JSONException" + e);
+            }
+
+        }
+
+
         mv_pic = (NetworkImageView) findViewById(R.id.mv_pic);
-        mv_pic.setImageUrl(url, imageLoader);
+        mv_pic.setImageUrl(String.format(youtubeThumbnail_Url, vId), imageLoader);
         mv_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                final Intent lightboxIntent = new Intent(c, CustomLightboxActivity.class);
-                lightboxIntent.putExtra(CustomLightboxActivity.KEY_VIDEO_ID, VIDEO_ID);
-                startActivity(lightboxIntent);
-
+               /* final Intent lightboxIntent = new Intent(c, CustomLightboxActivity.class);
+                lightboxIntent.putExtra(CustomLightboxActivity.KEY_VIDEO_ID, vId);
+                startActivity(lightboxIntent);*/
+                Intent web = new Intent(c, WebActivity.class);
+                String youtube = "https://www.youtube.com/watch?v=";
+                web.putExtra("url", youtube+vId);
+                startActivity(web);
             }
         });
 
@@ -88,6 +255,8 @@ public class MovieInfoActivity extends AppCompatActivity {
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setTitle(title);
+        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.info_viewpager);
         setupViewPager(viewPager);
@@ -95,27 +264,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.info_tabLayout);
         tabLayout.setupWithViewPager(viewPager);
 
-
-
         rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
-
-     /*   fabBtn = (FloatingActionButton) findViewById(R.id.fabBtn);
-        fabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar.make(rootLayout, "Hello. I am Snackbar!", Snackbar.LENGTH_SHORT)
-                        .setAction("Undo", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        })
-                        .show();
-            }
-        });
-*/
-
-
     }
 
     private void initNavigation(){

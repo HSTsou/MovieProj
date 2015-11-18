@@ -35,4 +35,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:7.8.0'
     compile 'com.android.support:design:23.1.0'
     compile 'com.google.code.gson:gson:2.4'
+    compile project(':ProgressWheel-master')
 }

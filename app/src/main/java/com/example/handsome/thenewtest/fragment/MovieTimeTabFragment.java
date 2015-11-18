@@ -115,7 +115,7 @@ public class MovieTimeTabFragment extends Fragment {
         if (bundle != null) {
             timeList = bundle.getStringArrayList("timeList");
             for(String timeStr : timeList){
-               Log.i("hs", "str= " + timeStr);
+               //Log.i("hs", "str= " + timeStr);
                 String[] timeObj = timeStr.split("\\|");
 
                 MovieTime mt = new MovieTime();

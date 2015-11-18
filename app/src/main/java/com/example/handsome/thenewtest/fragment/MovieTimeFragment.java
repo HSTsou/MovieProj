@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.handsome.thenewtest.MovieListActivity;
 import com.example.handsome.thenewtest.R;
+import com.example.handsome.thenewtest.TheaterInfoActivity;
 import com.example.handsome.thenewtest.adapter.MovieTimeAdapter;
 import com.example.handsome.thenewtest.entity.MovieTime;
 import com.example.handsome.thenewtest.helper.ItemClickSupport;
@@ -56,10 +56,10 @@ public class MovieTimeFragment  extends Fragment {
                 Log.i("hs", "position = " + position);
                 // Log.i("hs", "item = " + allData.get(position));
                 Intent i = new Intent();
-                i.setClass(getActivity(), MovieListActivity.class);
+                i.setClass(getActivity(), TheaterInfoActivity.class);
                 i.putExtra("movie", mtList.get(position));
                 String thId =  mtList.get(position).getThId();
-                i.putExtra("thId", thId);
+                i.putExtra("thId", thId.substring(10));/// "/showtime/xxxxxx/xx"" remove "/showtime/
                 startActivity(i);
 
             }

@@ -1,36 +1,27 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/posterLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"></LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:background="@drawable/smile"></RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/btnLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+    <ProgressBar
+        android:id="@+id/splash_progressBar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_weight="7">
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:text="START"
-            android:background="@drawable/start_btn"
-            android:textColor="#fcfffc"
-            android:textSize="@dimen/abc_action_bar_progress_bar_size"
-             />
-
-    </LinearLayout>
+        android:layout_gravity="center_horizontal|bottom"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_in"
+        android:indeterminateTint="@color/lake_green"
+        android:visibility="visible"/>
 
 
-</LinearLayout>
+</FrameLayout>

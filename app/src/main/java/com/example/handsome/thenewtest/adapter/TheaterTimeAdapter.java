@@ -93,8 +93,11 @@ public class TheaterTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public View setTimeText( String  text) {
         TableLayout stLayout = new TableLayout(view.getContext());
         if(text != null){
+
             TableRow tableRow  = new TableRow(view.getContext());
             tableRow.setGravity(Gravity.CENTER_HORIZONTAL);
+
+            text = text.replaceAll("：", ":");
             String[] timeStr = text.split("\\s");
             int record = 0;
             for (int x = 0; x < timeStr.length; x++) {
@@ -102,10 +105,11 @@ public class TheaterTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 final Button timeButton = new Button(view.getContext());
                 timeButton.setText(time);
-                timeButton.setPadding(12, 5, 12,  5);
+                timeButton.setPadding(12, 0, 12, 0);
+
                 // timeButton.setTextColor(R.color.black);
                 timeButton.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.transparent));
-                timeButton.setTypeface(Typeface.SANS_SERIF );
+                timeButton.setTypeface(Typeface.SERIF );
                 /*
                 if (isAvaliable) {
                     // same day

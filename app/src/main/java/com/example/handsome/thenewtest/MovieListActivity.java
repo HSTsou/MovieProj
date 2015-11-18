@@ -88,8 +88,9 @@ public class MovieListActivity extends AppCompatActivity {
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragment(MovieListFragment.createInstance("firstRun"), getString(R.string.first_run));
+
         pagerAdapter.addFragment(MovieListFragment.createInstance("thisWeek"),  getString(R.string.this_week));
+        pagerAdapter.addFragment(MovieListFragment.createInstance("firstRun"), getString(R.string.first_run));
         pagerAdapter.addFragment(MovieListFragment.createInstance("secondRun"), getString(R.string.second_run));
         pagerAdapter.addFragment(MovieListFragment.createInstance("notYet"), getString(R.string.not_yet));
 
@@ -97,6 +98,8 @@ public class MovieListActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
     }
+
+
 
     static class PagerAdapter extends FragmentPagerAdapter {// FragmentStatePagerAdapter
 

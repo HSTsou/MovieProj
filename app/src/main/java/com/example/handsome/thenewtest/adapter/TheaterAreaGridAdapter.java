@@ -44,8 +44,7 @@ public class TheaterAreaGridAdapter extends BaseAdapter {
         if(convertView == null){
             listViewHolder = new ViewHolder();
             convertView = layoutinflater.inflate(R.layout.theater_grid_item, parent, false);
-           // listViewHolder.textInListView = (TextView)convertView.findViewById(R.id.textView);
-            //listViewHolder.imageInListView = (ImageView)convertView.findViewById(R.id.imageView);
+
             listViewHolder.areaBtn = (Button)convertView.findViewById(R.id.area_btn);
             listViewHolder.rootlayout = (RelativeLayout)convertView.findViewById(R.id.rootLayout);
             convertView.setTag(listViewHolder);

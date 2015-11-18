@@ -1,6 +1,9 @@
 package com.example.handsome.thenewtest.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,14 +14,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.handsome.thenewtest.helper.ItemClickSupport;
-import com.example.handsome.thenewtest.MainActivity;
-import com.example.handsome.thenewtest.entity.Movie;
+import com.example.handsome.thenewtest.DBConstants;
 import com.example.handsome.thenewtest.MovieInfoActivity;
 import com.example.handsome.thenewtest.R;
 import com.example.handsome.thenewtest.adapter.MovieListAdapter;
+import com.example.handsome.thenewtest.entity.Movie;
+import com.example.handsome.thenewtest.helper.DatabaseHelper;
+import com.example.handsome.thenewtest.helper.ItemClickSupport;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -29,7 +34,7 @@ import java.util.List;
 public class MovieListFragment extends Fragment {
 
   //  public final static String ITEMS_COUNT_KEY = "PartThreeFragment$ItemsCount";
-
+    Context c;
     List<Movie> mvList_fragment;
     public static MovieListFragment createInstance(String state) {
 
@@ -68,7 +73,7 @@ public class MovieListFragment extends Fragment {
                 // Log.i("hs", "item = " + allData.get(position));
                 Intent i = new Intent();
                 i.setClass(getActivity(), MovieInfoActivity.class);
-                i.putExtra("movie",  mvList_fragment.get(position));
+                i.putExtra("mvId",  mvList_fragment.get(position).getGaeId());
                 startActivity(i);
             }
         });
@@ -86,30 +91,51 @@ public class MovieListFragment extends Fragment {
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        MovieListAdapter recyclerAdapter = new MovieListAdapter(getContext(), createMovie());//put Data in here
+        MovieListAdapter recyclerAdapter = new MovieListAdapter(getContext(), setMvDataListFromDB());//put Data in here
 
         recyclerView.setAdapter(recyclerAdapter);
     }
 
-    List<Movie> createMovie(){
 
-        List<Movie> choosenMvList = new ArrayList<>();
+
+    List<Movie> setMvDataListFromDB(){
+        List<Movie> mvList = new  ArrayList<Movie>();
+        DatabaseHelper helper = new DatabaseHelper(getActivity());
+        SQLiteDatabase db = helper.getWritableDatabase();
+
         Bundle bundle = getArguments();
-        if(bundle!=null) {
-            String state = bundle.getString("state");
 
-            for (int i = 0; i < MainActivity.MV_LIST.size(); i++) {
-                Movie mv  = MainActivity.MV_LIST.get(i);
-               // Log.i("hs", "bundle.getString(\"state\") = " + mv.getState());
-               if(state.equalsIgnoreCase(mv.getState())){
-                   Log.i("hs", mv.getMvName()+" (" + mv.getState());
-                  choosenMvList.add(mv);
-               }
+        String state = bundle.getString("state");
+        Cursor c = null;
+        try {
+            c = helper.getMovieListData(db, DBConstants.MOVIE.PLAYING_DATE, state);
 
+            while (c.moveToNext()){
+                Movie mv = new Movie();
+                //mv.setState(c.getString(0));
+                mv.setAtMoviesMvId(c.getString(1));
+                mv.setPlayingDate(c.getString(2));
+                mv.setMvName(c.getString(3));
+                mv.setEnName(c.getString(4));
+                mv.setImgLink(c.getString(5));
+                mv.setIMDbRating(c.getDouble(6));//get string from json but no translate to double.And then directly store into sqlite with a real data type.???
+                mv.setTomatoesRating(c.getDouble(7));//like above.
+                mv.setGaeId(c.getString(8));
+
+                mvList.add(mv);
             }
+        } finally {
+            c.close();
+            db.close();
         }
-        mvList_fragment = choosenMvList;
-        return choosenMvList;
+
+        if(state =="notYet"){
+            Collections.reverse(mvList);//if order list by "playingDate", the notYet movie will reverse. So reverse it again.
+        }
+
+        mvList_fragment = mvList;
+
+        return mvList;
     }
 
 }
