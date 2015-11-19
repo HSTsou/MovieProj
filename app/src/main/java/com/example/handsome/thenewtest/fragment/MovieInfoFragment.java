@@ -34,10 +34,11 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
     String IMDbUrl, tomatoesUrl;
 
     public static MovieInfoFragment createInstance(Movie m) {
-        Log.i("hs", "createInstance ");
+        Log.i("hs", "MovieInfoFragment createInstance ");
         MovieInfoFragment f = new MovieInfoFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("movie", m);
+        Log.i("hs", "MovieInfoFragment m.getIMDB" + m.getIMDbRating());
         f.setArguments(bundle);
         return f;
     }
@@ -45,7 +46,7 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i("hs", "onCreateView");
+        Log.i("hs", "MovieInfoFragment onCreateView");
 
         return inflater.inflate(R.layout.activity_movie_info_fragment, container, false);
     }
@@ -53,7 +54,7 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i("hs", "onViewCreated");
+        Log.i("hs", "MovieInfoFragment onViewCreated");
         enName =  (TextView) view.findViewById(R.id.enName_text);
         gate = (TextView) view.findViewById(R.id.gate_text);
         story = (TextView) view.findViewById(R.id.story_text);
@@ -102,17 +103,23 @@ public class MovieInfoFragment extends Fragment implements View.OnClickListener 
             director.setText(mv.getDirector());
             actor.setText(mv.getActor());
             writer.setText(mv.getWriter());
-
-            if(mv.getIMDbRating() == 0){
-                IMDbRating.setText("--");
-            }else{
-                IMDbRating.setText(String.valueOf(mv.getIMDbRating()));
+            Log.i("hs", "setInfoData() mv.getImgLink()" + mv.getImgLink());
+            Log.i("hs", "setInfoData() mv.getIMDB" + mv.getIMDbRating());
+            if(mv.getIMDbRating() != null){
+                if(mv.getIMDbRating() == 0){
+                    IMDbRating.setText("--");
+                }else{
+                    IMDbRating.setText(String.valueOf(mv.getIMDbRating()));
+                }
             }
 
-            if(mv.getTomatoesRating() == 0){
-                tomatoRating.setText("--");
-            }else{
-                tomatoRating.setText(String.valueOf(mv.getTomatoesRating())+"%");
+            if(mv.getTomatoesRating()  != null){
+                if(mv.getTomatoesRating() == 0){
+                    tomatoRating.setText("--");
+                }else{
+                    tomatoRating.setText(String.valueOf(mv.getTomatoesRating())+"%");
+                }
+
             }
 
             IMDbUrl = mv.getMv_IMDbMoblieUrl();

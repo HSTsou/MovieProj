@@ -25,14 +25,14 @@ public class MovieTimeTabFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
+    View view;
     LinkedHashMap<String, ArrayList<MovieTime>> areaMvTime = new LinkedHashMap<>();
 
     public MovieTimeTabFragment() {
     }
 
     public static MovieTimeTabFragment createInstance(ArrayList<String> timeList) {
-        Log.i("hs", "MovieInfoFragment createInstance ");
+        Log.i("hs", "MovieTimeTabFragment createInstance ");
         MovieTimeTabFragment f = new MovieTimeTabFragment();
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("timeList", timeList);
@@ -42,31 +42,41 @@ public class MovieTimeTabFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.movietime_tab_fragment, container, false);
+
 
         List<MovieTime> allMtList =  setTimeList();
-        //get the same area title and save into hashmap
-        for (MovieTime mt : allMtList){
-            ArrayList<MovieTime> mvTimeByArea = new ArrayList<>();
-            if(!areaMvTime.containsKey(mt.getArea())){
-                mvTimeByArea.add(mt) ;
-                areaMvTime.put(mt.getArea(), mvTimeByArea);
-            }else{
-                ArrayList<MovieTime> existList = areaMvTime.get(mt.getArea());
-                existList.add(mt);
-                areaMvTime.put(mt.getArea(), existList);
+        if(allMtList.size()>0){
+
+            view = inflater.inflate(R.layout.movietime_tab_fragment, container, false);
+            //get the same area title and save into hashmap
+            for (MovieTime mt : allMtList){
+                ArrayList<MovieTime> mvTimeByArea = new ArrayList<>();
+                if(!areaMvTime.containsKey(mt.getArea())){
+                    mvTimeByArea.add(mt) ;
+                    areaMvTime.put(mt.getArea(), mvTimeByArea);
+                }else{
+                    ArrayList<MovieTime> existList = areaMvTime.get(mt.getArea());
+                    existList.add(mt);
+                    areaMvTime.put(mt.getArea(), existList);
+                }
+
             }
 
+            viewPager = (ViewPager) view.findViewById(R.id.time_viewpager);
+            setupViewPager(viewPager);
+
+            tabLayout = (TabLayout) view.findViewById(R.id.time_tabLayout);
+            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+            tabLayout.setupWithViewPager(viewPager);
+
+            return view;
+        }else{
+            view = inflater.inflate(R.layout.content_no_time, container, false);
+            //viewPager = (ViewPager) view.findViewById(R.id.time_viewpager);
+            //setupViewPager(viewPager);
+            return view;
         }
 
-        viewPager = (ViewPager) view.findViewById(R.id.time_viewpager);
-        setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) view.findViewById(R.id.time_tabLayout);
-        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        tabLayout.setupWithViewPager(viewPager);
-
-        return view;
     }
 
     private void setupViewPager(ViewPager viewPager) {

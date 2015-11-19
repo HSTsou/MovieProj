@@ -22,4 +22,8 @@
     <color name="color_accent_pink">#ff4081</color>
     <color name="color_shadow">#44000000</color>
     <color name="light_blue_pressed">#3bc3d2</color>
+
+    <color name="book_loading_background">#ffffff</color>
+    <color name="book_loading_book">#ff33b5e5</color>
+    <color name="book_loading_page">#ffffff</color>
 </resources>

@@ -1,8 +1,16 @@
 package com.example.handsome.thenewtest;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
@@ -18,26 +26,104 @@ import java.util.List;
  */
 public class TheaterAreaActivity extends AppCompatActivity{
 
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle drawerToggle;
+    Context context;
+    NestedScrollView nestedScrollview;
+    GridView gridview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theater_area);
-        Context c = this;
-        GridView gridview = (GridView) findViewById(R.id.theater_gridview);
+        context = this;
+
+        //nestedScrollview = (NestedScrollView) findViewById(R.id.nested_view);
+        gridview = (GridView) findViewById(R.id.theater_gridview);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            gridview.setNestedScrollingEnabled(true);
+        }
+
+        initNavigation();
+        initToolbar();
 
         List<AreaObject> allItems = getAllAreaObject();
-        TheaterAreaGridAdapter customAdapter = new TheaterAreaGridAdapter(c, allItems);
+        TheaterAreaGridAdapter customAdapter = new TheaterAreaGridAdapter(context, allItems);
         gridview.setAdapter(customAdapter);
 
     }
+
+    private void initNavigation(){
+        drawerLayout = (DrawerLayout) findViewById(R.id.area_drawerLayout);
+        drawerToggle = new ActionBarDrawerToggle(TheaterAreaActivity.this, drawerLayout, R.string.app_name, R.string.app_name);
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.setFitsSystemWindows(true);
+
+
+        NavigationView navigation;
+        navigation = (NavigationView) findViewById(R.id.navigation);
+        navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                Intent i = new Intent();
+                switch (id) {
+                    case R.id.navItem1:
+                        i.setClass(context, MainActivity.class);
+                        finish();
+                        startActivity(i);
+                        break;
+                    case R.id.movie:
+                        i.setClass(context, MovieListActivity.class);
+                        finish();
+                        startActivity(i);
+                        break;
+                    case R.id.theater:
+                        i.setClass(context, TheaterAreaActivity.class);
+                        finish();
+                        startActivity(i);
+                        break;
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void initToolbar() {
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //setTitle(getString(R.string.app_name));
+        //  mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
+    }
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+       //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //navigation home button.
+        if (drawerToggle.onOptionsItemSelected(item))
+            return true;
 
         int id = item.getItemId();
 

@@ -14,18 +14,10 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/mm_logo"
+        android:src="@drawable/mm144flap"
         android:layout_gravity="center|center_vertical"
 
          />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:layout_margin="@dimen/nav_header_text_margin_left"
-        android:text="安安給虧嗎"
-        android:textSize="20dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </FrameLayout>

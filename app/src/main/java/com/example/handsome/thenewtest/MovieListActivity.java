@@ -55,6 +55,9 @@ public class MovieListActivity extends AppCompatActivity {
                 Intent i = new Intent();
                 switch (id) {
                     case R.id.navItem1:
+                        i.setClass(context, MainActivity.class);
+                        finish();
+                        startActivity(i);
                         break;
                     case R.id.movie:
                         i.setClass(context, MovieListActivity.class);
@@ -78,6 +81,9 @@ public class MovieListActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
         //setTitle(getString(R.string.app_name));
       //  mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
     }
@@ -150,7 +156,7 @@ public class MovieListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

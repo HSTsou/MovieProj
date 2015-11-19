@@ -80,10 +80,25 @@ public class MovieInfoActivity extends AppCompatActivity {
         helper = new DatabaseHelper(this);
         db = helper.getWritableDatabase();
 
-        mvId = getIntent().getStringExtra("mvId");
-        getMovieInfoByJson();
-        initNavigation();
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+           mvId = savedInstanceState.getString("mvId");
+           Log.i("hs", "savedInstanceState.getString(\"mvId\")" + mvId);
 
+            initToolBar();
+            initNavigation();
+            m = loadMvInfoFromDB(mvId);
+            title = m.getMvName();
+            url = m.getImgLink();
+            setTrailerPic();
+            initInstances();
+        } else {
+            // Probably initialize members with default values for a new instance
+            mvId = getIntent().getStringExtra("mvId");
+            initToolBar();
+            initNavigation();
+            getMovieInfoByJson();
+        }
 
         //YouTubeFragment fragment = (YouTubeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_youtube);
         //fragment.setVideoId("VxJsGKn2kyA");
@@ -147,8 +162,9 @@ public class MovieInfoActivity extends AppCompatActivity {
                         m = loadMvInfoFromDB(mvId);
                         title = m.getMvName();
                         url = m.getImgLink();
-
+                        setTrailerPic();
                         initInstances();
+
 
                     }
                 }, new Response.ErrorListener() {
@@ -157,7 +173,7 @@ public class MovieInfoActivity extends AppCompatActivity {
                 // VolleyLog.d(TAG, "Error: " + error.getMessage());
                 Log.i("hs", "Error = " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                        R.string.beautiful_error, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -190,8 +206,8 @@ public class MovieInfoActivity extends AppCompatActivity {
             mv.setMv_TomatoesMoblieUrl(c.getString(13));
             mv.setIMDbRating(Double.parseDouble(c.getString(14)));
             mv.setTomatoesRating(Double.parseDouble(c.getString(15)));
-
-
+            Log.i("hs", "IMDB  = " + Double.parseDouble(c.getString(14)));
+            Log.i("hs", "tomato  = " + Double.parseDouble(c.getString(15)));
             Gson gson = new Gson();
             Type type = new TypeToken<List<String>>() {}.getType();
             List<String> mvTimeInfoStr_List = gson.fromJson(c.getString(16), type);
@@ -207,9 +223,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         return mv;
     }
 
-    private void initInstances() {
-
-
+    private void setTrailerPic(){
         List<String> utubeUrlList = m.getYoutubeUrlList();
 
         String utubeUrl;
@@ -246,12 +260,22 @@ public class MovieInfoActivity extends AppCompatActivity {
                 startActivity(web);
             }
         });
+    }
 
+
+    private void initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar.setLogo(R.drawable.mm_logo);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);//remove the title text
+    }
+
+    /**
+     * set the tab and tab's content
+     */
+    private void initInstances() {
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setTitle(title);
@@ -264,7 +288,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.info_tabLayout);
         tabLayout.setupWithViewPager(viewPager);
 
-        rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
+        //rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
     }
 
     private void initNavigation(){
@@ -282,6 +306,9 @@ public class MovieInfoActivity extends AppCompatActivity {
                 Intent i = new Intent();
                 switch (id) {
                     case R.id.navItem1:
+                        i.setClass(c, MainActivity.class);
+                        finish();
+                        startActivity(i);
                         break;
                     case R.id.movie:
                         i.setClass(c, MovieListActivity.class);
@@ -303,6 +330,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(MovieInfoFragment.createInstance(m), getString(R.string.movie_info));
+
         adapter.addFrag(MovieTimeTabFragment.createInstance((ArrayList)m.getAllMvThShowtimeList()), getString(R.string.movie_time));
         viewPager.setAdapter(adapter);
     }
@@ -353,7 +381,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+       // getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -373,5 +401,50 @@ public class MovieInfoActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        Log.i("hs", "onSaveInstanceState" );
+        outState.putString("mvId", mvId );
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("hs", "onStop()");
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Log.i("hs", " onPostResume()");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("hs", " onResume()");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("hs", "onDestroy()");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("hs", "onRestart()");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.i("hs", "onRestoreInstanceState");
+        Log.i("hs", "savedInstanceState.get(\"mvId\") = " + savedInstanceState.get("mvId"));;
     }
 }

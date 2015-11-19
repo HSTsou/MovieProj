@@ -3,15 +3,22 @@ package com.example.handsome.thenewtest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -50,10 +57,12 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
     private List<Map<String, String>> data;
     private SharedPreferencesHelper prefHelper;
 
-    private String inst = "";
+
     String areaId,areaName ;
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle drawerToggle;
 
     private Location mLastLocation;
     // Google client to interact with Google API
@@ -76,13 +85,15 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         dbHelper = new DatabaseHelper(this);
         handler = new Handler();
         context = this;
-        setContentView(R.layout.recyclerview_fragment);
-
+        setContentView(R.layout.activity_th_list);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        initNavigation();
+        initToolbar();
 
         Bundle bundle = this.getIntent().getExtras();
         areaId = (String) bundle.get("areaId");
@@ -96,6 +107,55 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         }
         //togglePeriodicLocationUpdates();
     }
+
+
+    private void initNavigation(){
+        drawerLayout = (DrawerLayout) findViewById(R.id.thlist_drawerLayout);
+        drawerToggle = new ActionBarDrawerToggle(TheaterListActivity.this, drawerLayout, R.string.app_name, R.string.app_name);
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.setFitsSystemWindows(true);
+
+
+        NavigationView navigation;
+        navigation = (NavigationView) findViewById(R.id.navigation);
+        navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                Intent i = new Intent();
+                switch (id) {
+                    case R.id.navItem1:
+                        i.setClass(context, MainActivity.class);
+                        finish();
+                        startActivity(i);
+                        break;
+                    case R.id.movie:
+                        i.setClass(context, MovieListActivity.class);
+                        finish();
+                        startActivity(i);
+                        break;
+                    case R.id.theater:
+                        i.setClass(context, TheaterAreaActivity.class);
+                        finish();
+                        startActivity(i);
+                        break;
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void initToolbar() {
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //setTitle(getString(R.string.app_name));
+        //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
+    }
+
 
     /**
      * Method to verify google play services on the device
@@ -370,7 +430,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
                 Log.i("hs", "position = " + position);
                 // Log.i("hs", "item = " + allData.get(position));
 
-                String thId =  data.get(position).get(DBConstants.THEATER.ID);
+                String thId = data.get(position).get(DBConstants.THEATER.ID);
                 Intent i = new Intent();
                 i.setClass(context, TheaterInfoActivity.class);
 
@@ -423,7 +483,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
                     double startLongitude = mLastLocation.getLongitude();
 
                     Location.distanceBetween(startLatitude, startLongitude, endLat, endLng, distanceResults);
-                    Log.i("hs", "distanceResults = " + distanceResults[0]);
+                   // Log.i("hs", "distanceResults = " + distanceResults[0]);
 
                 } else {
                     Log.i("hs","no location!!");
@@ -496,5 +556,41 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         showContent();
 
     }
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        //navigation home button.
+        if (drawerToggle.onOptionsItemSelected(item))
+            return true;
+
+        int id = item.getItemId();
+
+        if (id == R.id.menu_refresh) {
+            refresh();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

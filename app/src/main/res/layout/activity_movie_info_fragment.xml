@@ -95,7 +95,7 @@
             android:layout_margin="20dp"
             android:focusableInTouchMode="false"
             android:scaleType="centerCrop"
-            android:src="@drawable/smile"
+            android:src="@drawable/mm144flap"
             android:adjustViewBounds="true"/>
 
         <FrameLayout
@@ -135,7 +135,7 @@
                     android:layout_width="33dp"
                     android:layout_height="33dp"
                     android:layout_below="@+id/playdate_value_text"
-                    android:background="@drawable/imdb_icon"
+                    android:background="@drawable/imdb_btn"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="5dp"
                     />
@@ -158,7 +158,7 @@
                     android:layout_height="37dp"
                     android:layout_below="@+id/IMDb_img"
                     android:paddingLeft="3dp"
-                    android:background="@drawable/tomato_icon"
+                    android:background="@drawable/tomato_btn"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="5dp"
                   />

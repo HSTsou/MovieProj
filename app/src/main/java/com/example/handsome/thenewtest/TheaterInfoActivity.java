@@ -149,7 +149,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
                 // VolleyLog.d(TAG, "Error: " + error.getMessage());
                 Log.i("hs", "Error = " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                        R.string.beautiful_error, Toast.LENGTH_SHORT).show();
 
             }
 
@@ -196,7 +196,6 @@ public class TheaterInfoActivity extends AppCompatActivity {
 
     private void initInstances(String title) {
 
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar.setLogo(R.drawable.mm_logo);
         setSupportActionBar(toolbar);
@@ -207,8 +206,6 @@ public class TheaterInfoActivity extends AppCompatActivity {
         collapsingToolbarLayout.setTitle(title);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
-
-
 
        // rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
 
@@ -246,6 +243,9 @@ public class TheaterInfoActivity extends AppCompatActivity {
                 Intent i = new Intent();
                 switch (id) {
                     case R.id.navItem1:
+                        i.setClass(c, MainActivity.class);
+                        finish();
+                        startActivity(i);
                         break;
                     case R.id.movie:
                         i.setClass(c, MovieListActivity.class);
