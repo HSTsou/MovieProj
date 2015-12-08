@@ -5,9 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+
 
 
         <android.support.design.widget.CoordinatorLayout
@@ -31,32 +29,36 @@
 
             </android.support.design.widget.AppBarLayout>
 
-            <!-- <NestedScrollView
+             <android.support.v4.widget.NestedScrollView
                   android:id="@+id/nested_view"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  app:layout_behavior="@string/appbar_scrolling_view_behavior">   </NestedScrollView>
-      -->
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                 <com.example.handsome.thenewtest.util.InnerGridView
+                     android:background="@color/white"
+
+                     android:id="@+id/theater_gridview"
+                     android:layout_width="match_parent"
+                     android:layout_height="fill_parent"
+                     android:columnWidth="90dp"
+                     android:gravity="center"
+                     android:horizontalSpacing="10dp"
+                     android:numColumns="auto_fit"
+                     android:paddingLeft="20dp"
+                     android:paddingRight="20dp"
+                     android:stretchMode="columnWidth"
+                     android:verticalSpacing="10dp"
+                     />
+
+             </android.support.v4.widget.NestedScrollView>
 
 
-            <GridView
-                android:layout_marginTop="?attr/actionBarSize"
-                android:id="@+id/theater_gridview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:columnWidth="90dp"
-                android:gravity="center"
-                android:horizontalSpacing="10dp"
-                android:numColumns="auto_fit"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="10dp"
-                />
 
 
         </android.support.design.widget.CoordinatorLayout>
-    </RelativeLayout>
+
 
     <include layout="@layout/navigation" />
+
 </android.support.v4.widget.DrawerLayout>

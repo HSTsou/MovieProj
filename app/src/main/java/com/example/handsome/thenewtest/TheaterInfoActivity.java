@@ -31,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.handsome.thenewtest.entity.TheaterTime;
 import com.example.handsome.thenewtest.fragment.TheaterTimeFragment;
+import com.example.handsome.thenewtest.fragment.TheaterWebFragment;
 import com.example.handsome.thenewtest.helper.DatabaseHelper;
 import com.example.handsome.thenewtest.helper.JSONHelper;
 import com.example.handsome.thenewtest.util.AppController;
@@ -140,8 +141,8 @@ public class TheaterInfoActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         //Log.i(TAG, response.toString());
                         parseThTimeJsonAndStore(response);
-
                         setViewPager();
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -330,10 +331,16 @@ public class TheaterInfoActivity extends AppCompatActivity {
                     TheaterTime th = new TheaterTime();
                     String[] thTimeStr = thTime.split("!");
                     date = thTimeStr[0];
-                    mvAndTimeStr = thTimeStr[1];
-                    th.setThDate(date);
-                    th.setAllThTimeStr(mvAndTimeStr.substring(1));//remove the first "@"
-                    thTimeList.add(th);
+
+                    if(thTimeStr.length > 1){//if no exceed 1 means : ["{\"value\":\"\\/showtime\\/t02d20\\/a02\\/!\"}"] no timeStr
+                        mvAndTimeStr = thTimeStr[1];
+                        th.setAllThTimeStr(mvAndTimeStr.substring(1));//remove the first "@"
+                        th.setThDate(date);
+                        thTimeList.add(th);
+                    }else{//no timeStr, so directly return null, and then ....
+                        return null;
+                    }
+
                 }
 
             }catch(JSONException e){
@@ -380,6 +387,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
             }
             viewPager.setAdapter(adapter);
         }else{
+            adapter.addFrag(TheaterWebFragment.createInstance(thId), "網站");
             viewPager.setAdapter(adapter);
         }
 

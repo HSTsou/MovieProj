@@ -13,10 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.GridView;
 
 import com.example.handsome.thenewtest.adapter.TheaterAreaGridAdapter;
 import com.example.handsome.thenewtest.entity.AreaObject;
+import com.example.handsome.thenewtest.util.InnerGridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +30,15 @@ public class TheaterAreaActivity extends AppCompatActivity{
     ActionBarDrawerToggle drawerToggle;
     Context context;
     NestedScrollView nestedScrollview;
-    GridView gridview;
+    InnerGridView gridview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theater_area);
         context = this;
 
-        //nestedScrollview = (NestedScrollView) findViewById(R.id.nested_view);
-        gridview = (GridView) findViewById(R.id.theater_gridview);
+        nestedScrollview = (NestedScrollView) findViewById(R.id.nested_view);
+        gridview = (InnerGridView) findViewById(R.id.theater_gridview);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             gridview.setNestedScrollingEnabled(true);

@@ -5,14 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.handsome.thenewtest.helper.AssetsHelper;
@@ -39,62 +48,96 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG = "hs";
     Context context;
     private SharedPreferencesHelper prefHelper;
-    DatabaseHelper helper ;
-    SQLiteDatabase db;
-    List<String> playingMvId;
-    ImageView splashImg;
 
-   private NewtonCradleLoading newtonCradleLoading;
+    private List<String> playingMvId;//無入用
+    private ImageView splashImg;
+    private TextView info_text;
+    private NewtonCradleLoading newtonCradleLoading;
+    private SwipeRefreshLayout swipeView;
+    DatabaseHelper helper ;
+
+    SQLiteDatabase db ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("hs", "on creating");
         setContentView(R.layout.activity_main);
-
+        helper = new DatabaseHelper(this);
+        db = helper.getWritableDatabase();
         prefHelper = new SharedPreferencesHelper(this);
         context = this;
-
-        //splashImg = (ImageView) findViewById(R.id.splash_img);
+        info_text = (TextView) findViewById(R.id.info_text);
+        splashImg = (ImageView) findViewById(R.id.splash_img);
         newtonCradleLoading = (NewtonCradleLoading) findViewById(R.id.newton_cradle_loading);
         newtonCradleLoading.start();
 
-        helper = new DatabaseHelper(this);
-        db = helper.getWritableDatabase();
+        swipeView = (SwipeRefreshLayout) findViewById(R.id.swipe);
+
+        swipeView.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(context, R.color.black));
+        swipeView.setColorSchemeResources(
+                R.color.white,R.color.lake_green
+                );
+
+        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeView.setRefreshing(true); //starts refreshing
+                getAllMvInfoByJSON();
+            }
+        });
+
 
 
         if (prefHelper.isFirstTime()) {//initiate the theater data.
-            initThread.start();
-        }else{
+            //initThread.start();
+            if (initiateApp()) {
+                Log.i(TAG, "Initiate successfully");
+                prefHelper.setFirstTime(false);
+            } else {
+                Log.e(TAG, "Initiation failed");
+            }
+        } else {
             Log.i("hs", "notFirstTime");
             clearTable();
         }
-
     }
 
-    public void clearTable(){
-        db.delete(DBConstants.MOVIE.TABLE_NAME, null,null);
+    /**
+     * 目前是一進入清空資料庫，
+     */
+    public void clearTable() {
+       // SQLiteDatabase db = helper.getWritableDatabase();
+        db.delete(DBConstants.MOVIE.TABLE_NAME, null, null);
         Log.i("hs", "delete MOVIE.TABLE ");
     }
 
     private boolean initiateApp() {
         Log.i("hs", "Initiating App");
+        newtonCradleLoading.start();
+        info_text.setText(R.string.init_data_ing);
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         AssetsHelper asHelper = new AssetsHelper(this, dbHelper);
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
         try {
             try {
                 asHelper.loadTheaterData(db);
+                db.setTransactionSuccessful();
                 return true;
             } catch (IOException e) {
                 Log.e("hs", e.toString());
             }
         } finally {
+
+            db.endTransaction();
             db.close();
         }
         return false;
     }
-
+/*
+*
     private Thread initThread = new Thread() {
         @Override
         public void run() {
@@ -108,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    };
+    };*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_refresh) {
-          //  Toast.makeText(this, "refresh", Toast.LENGTH_SHORT).show();
-          //  makeJsonArrayRequest();
+            //  Toast.makeText(this, "refresh", Toast.LENGTH_SHORT).show();
+            //  makeJsonArrayRequest();
         }
 
         return super.onOptionsItemSelected(item);
@@ -129,20 +172,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void getAllMvInfoByJSON() {
         Log.i("hs", "getAllMvInfo");
+        info_text.setText(R.string.update_data_ing);
         final String allmV = "all-mv";
-        String url = MM_URL +allmV;
+        String url = MM_URL + allmV;
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         //Log.i(TAG, response.toString());
-                        if(parseMvJsonAndStore(response)){
+                        if (parseMvJsonAndStore(response)) {
                             Log.i("hs", "movie Done ");
 
-                        }else{
+                        } else {
                             Log.i("hs", "what's wrong? ");
                         }
                         newtonCradleLoading.stop();
+                        swipeView.setRefreshing(false);
+                        info_text.setText(R.string.update_data_finish);
 
                         startActivity(new Intent(MainActivity.this,
                                 MovieListActivity.class));
@@ -150,11 +196,24 @@ public class MainActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-               // VolleyLog.d(TAG, "Error: " + error.getMessage());
+
                 Log.i("hs", "Error = " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         R.string.beautiful_error, Toast.LENGTH_SHORT).show();
+                info_text.setText(R.string.update_data_error);
+                swipeView.setRefreshing(false);
 
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    Log.i("hs", "no connection|timeout Error = " + error.getMessage());
+                } else if (error instanceof AuthFailureError) {
+                    Log.i("hs", "AuthFailureError Error = " + error.getMessage());
+                } else if (error instanceof ServerError) {
+                    Log.i("hs", "ServerError Error = " + error.getMessage());
+                } else if (error instanceof NetworkError) {
+                    Log.i("hs", "NetworkError Error = " + error.getMessage());
+                } else if (error instanceof ParseError) {
+                    Log.i("hs", "ParseError Error = " + error.getMessage());
+                }
             }
 
         });
@@ -164,13 +223,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
-        try{
+        try {
             getAllMvInfoByJSON();
             //getAllThTimeByJSON();
-        }finally {
-           // db.close();
+        } finally {
+            // db.close();
         }
 
     }
@@ -181,51 +240,52 @@ public class MainActivity extends AppCompatActivity {
         AppController.getInstance().cancelPendingRequests(AppController.TAG);
     }
 
-    boolean parseMvJsonAndStore(JSONArray response){
+    boolean parseMvJsonAndStore(JSONArray response) {
 
         db.beginTransaction();
         playingMvId = new ArrayList<>();//check movie is playing or not.
-
-        try{
+        Log.i("hs", "playing Mv number :" + response.length());
+        try {
             for (int i = 0; i < response.length(); i++) {
                 try {
                     final JSONObject obj = response.getJSONObject(i);
                     final ContentValues cv = new ContentValues();
 
-                            String GAEId = null;
-                            try {
-                                GAEId = obj.getJSONObject("key").getString("id");
-                                Log.i("hs", " GAEId" + GAEId);
-                                playingMvId.add(GAEId);
+                    String GAEId = null;
+                    try {
+                        GAEId = obj.getJSONObject("key").getString("id");
+                        //Log.i("hs", " GAEId" + GAEId);
+                        playingMvId.add(GAEId);
 
-                                for(String unit : DatabaseHelper.COL_MOVIE){
-                                    if(!obj.isNull(unit)){
-                                        if(unit == "playingDate"){
-                                            String formatPlayingDate = obj.getString(unit).replaceAll("/", "-");
-                                            cv.put(unit, formatPlayingDate);
-                                            continue;
-                                        }
-                                        cv.put(unit, obj.getString(unit));
-                                    }else{
-                                        cv.putNull(unit);
-                                    }
+                        for (String unit : DatabaseHelper.COL_MOVIE) {
+                            if (!obj.isNull(unit)) {
+                                if (unit == "playingDate") {
+                                    String formatPlayingDate = obj.getString(unit).replaceAll("/", "-");
+                                    cv.put(unit, formatPlayingDate);
+                                    continue;
                                 }
-
-                                Gson gson = new Gson();
-                                if(!obj.isNull(DBConstants.MOVIE.YOUTUBE_URL_LIST)){
-                                    String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.YOUTUBE_URL_LIST)));
-                                    cv.put(DBConstants.MOVIE.YOUTUBE_URL_LIST, youtubeListString);
-                                }
-                                if(!obj.isNull(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)) {
-                                    String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)));
-                                    cv.put(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                cv.put(unit, obj.getString(unit));
+                            } else {
+                                cv.putNull(unit);
                             }
-                            cv.put(DBConstants.MOVIE.ID, GAEId);
-                            helper.insertMovieInfo(db, cv);
+                        }
+
+                        Gson gson = new Gson();
+                        if (!obj.isNull(DBConstants.MOVIE.YOUTUBE_URL_LIST)) {
+                            String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.YOUTUBE_URL_LIST)));
+                            cv.put(DBConstants.MOVIE.YOUTUBE_URL_LIST, youtubeListString);
+                        }
+                        if (!obj.isNull(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)) {
+                            String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)));
+                            cv.put(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.i("hs", "JSONException@parsing" + e);
+                    }
+                    cv.put(DBConstants.MOVIE.ID, GAEId);
+                    helper.insertMovieInfo(db, cv);
 
 
                 } catch (JSONException e) {
@@ -236,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
             }
             db.setTransactionSuccessful();
 
-        }finally{
+        } finally {
             //Log.i("hs", "  db.endTransaction(); ");
             db.endTransaction();
             db.close();
@@ -278,8 +338,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }*/
-
-
 
 
 }

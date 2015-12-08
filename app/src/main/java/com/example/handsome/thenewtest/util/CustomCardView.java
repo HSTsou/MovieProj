@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import com.example.handsome.thenewtest.R;
 
 /**
+ * change the color when click the cardview
  * Created by handsome on 2015/10/28.
  */
 public class CustomCardView extends CardView {

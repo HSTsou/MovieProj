@@ -47,16 +47,7 @@ public interface DBConstants {
             + MOVIE.YOUTUBE_URL_LIST+ " text, "
             + MOVIE.ALL_MV_TH_SHOWTIME_LIST + " text, "+ MOVIE.UPDATE_DATE + " text, PRIMARY KEY ("+ MOVIE.ID +") );";
 
-    /*interface GENRE {
-        String TABLE_NAME = "Genre";
-        String ID = "_id";
-        String NAME = "name";
-    }
 
-    String CREATE_GENRE = GENRE.TABLE_NAME + " ("
-            + GENRE.ID + " text primary key, " + GENRE.NAME
-            + " text not null);";
-*/
     interface THEATER {
         String TABLE_NAME = "Theater";
         String ID = "_id";

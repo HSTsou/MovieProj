@@ -106,6 +106,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
              //displayLocation();
         }
         //togglePeriodicLocationUpdates();
+
     }
 
 
@@ -169,7 +170,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Toast.makeText(getApplicationContext(),
-                        "This device is not supported.", Toast.LENGTH_LONG)
+                        R.string.beautiful_error, Toast.LENGTH_LONG)
                         .show();
                 finish();
             }
@@ -217,6 +218,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
             refresh();
         } else {
             Log.i("hs", "(Couldn't get the location. Make sure location is enabled on the device)");
+            refresh();
 
         }
     }
@@ -357,7 +359,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         } else {
                 Log.i(TAG, "Cannot get location...");
                 Toast.makeText(getApplicationContext(),
-                        getResources().getString(R.string.plz_open_net_gps),
+                        getResources().getString(R.string.open_google_gps),
                         Toast.LENGTH_LONG).show();
                 load();
                 showContent();
