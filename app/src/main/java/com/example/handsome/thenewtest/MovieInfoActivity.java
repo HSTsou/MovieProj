@@ -37,7 +37,7 @@ import com.example.handsome.thenewtest.fragment.MovieTimeTabFragment;
 import com.example.handsome.thenewtest.helper.DatabaseHelper;
 import com.example.handsome.thenewtest.helper.JSONHelper;
 import com.example.handsome.thenewtest.util.AppController;
-import com.google.android.youtube.player.YouTubePlayerView;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -65,7 +65,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     DatabaseHelper helper ;
     SQLiteDatabase db;
 
-    private YouTubePlayerView playerView;
+
     Context c;
 
     Movie m;
@@ -100,8 +100,7 @@ public class MovieInfoActivity extends AppCompatActivity {
             getMovieInfoByJson();
         }
 
-        //YouTubeFragment fragment = (YouTubeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_youtube);
-        //fragment.setVideoId("VxJsGKn2kyA");
+
     }
 
     void parseMvInfoJsonAndStore(JSONObject response){

@@ -30,6 +30,7 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
+
         if(mtList.size()>0){
             view = LayoutInflater.from(context).inflate(R.layout.content_movietime, parent, false);
             return new RecyclerItemViewHolder(view);
@@ -60,6 +61,11 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
 
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 
     @Override

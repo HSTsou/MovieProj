@@ -9,6 +9,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.parse.Parse;
+import com.parse.ParseACL;
+import com.parse.ParseInstallation;
+import com.parse.ParseUser;
 
 public class AppController extends Application {
 
@@ -23,6 +27,18 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+
+        Parse.enableLocalDatastore(this);
+
+        Parse.initialize(this, "Pm4i4qOiz4WmkYbaSqZjQqb1xxEQNtEtfRgxB1jV", "AqJZ1rMlmZe9YQsjesTOoAsY6K6eLAhaGVkAZd2P");
+
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+
+        ParseUser.enableAutomaticUser();
+        ParseACL defaultACL = new ParseACL();
+        // Optionally enable public read access.
+        // defaultACL.setPublicReadAccess(true);
+        ParseACL.setDefaultACL(defaultACL, true);
     }
 
     public static synchronized AppController getInstance() {

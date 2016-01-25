@@ -26,4 +26,6 @@
     <string name="update_data_ing">更新資料中...</string>
     <string name="update_data_finish">完成</string>
     <string name="update_data_error">失敗...請從上往下拉一遍</string>
+    <string name="parse_app_id">Pm4i4qOiz4WmkYbaSqZjQqb1xxEQNtEtfRgxB1jV</string>
+    <string name="parse_client_key">AqJZ1rMlmZe9YQsjesTOoAsY6K6eLAhaGVkAZd2P</string>
 </resources>

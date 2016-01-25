@@ -31,6 +31,7 @@ import com.example.handsome.thenewtest.helper.SharedPreferencesHelper;
 import com.example.handsome.thenewtest.third.NewtonCradleLoading;
 import com.example.handsome.thenewtest.util.AppController;
 import com.google.gson.Gson;
+import com.parse.ParseAnalytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("hs", "on creating");
         setContentView(R.layout.activity_main);
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
         helper = new DatabaseHelper(this);
         db = helper.getWritableDatabase();
         prefHelper = new SharedPreferencesHelper(this);
@@ -136,8 +139,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-/*
-*
+
     private Thread initThread = new Thread() {
         @Override
         public void run() {
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    };*/
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -175,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         info_text.setText(R.string.update_data_ing);
         final String allmV = "all-mv";
         String url = MM_URL + allmV;
+
         JsonArrayRequest req = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
                     @Override
