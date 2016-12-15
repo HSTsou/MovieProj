@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.handsome.thenewtest.DBConstants;
 import com.example.handsome.thenewtest.MovieInfoActivity;
@@ -21,6 +22,7 @@ import com.example.handsome.thenewtest.adapter.MovieListAdapter;
 import com.example.handsome.thenewtest.entity.Movie;
 import com.example.handsome.thenewtest.helper.DatabaseHelper;
 import com.example.handsome.thenewtest.helper.ItemClickSupport;
+import com.example.handsome.thenewtest.helper.SharedPreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +38,7 @@ public class MovieListFragment extends Fragment {
   //  public final static String ITEMS_COUNT_KEY = "PartThreeFragment$ItemsCount";
     Context c;
     List<Movie> mvList_fragment;
+    private SharedPreferencesHelper prefHelper;
     public static MovieListFragment createInstance(String state) {
 
         Log.i("hs", "createInstance!" + state);
@@ -47,13 +50,12 @@ public class MovieListFragment extends Fragment {
         return f;
     }
 
-   /* @Override
+   @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i("hs", "onCreate");
         super.onCreate(savedInstanceState);
-        //get data from Argument
-        //position = getArguments().getInt("position");
-    }*/
+       prefHelper = new SharedPreferencesHelper(getActivity());
+    }
 
 
     @Nullable
@@ -65,6 +67,15 @@ public class MovieListFragment extends Fragment {
 
         setupRecyclerView(recyclerView);
 
+        //longterm event to add the collection of favorites.
+        ItemClickSupport.addTo(recyclerView).setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+                Toast.makeText(getActivity(), "add " + mvList_fragment.get(position).getMvName() + " to fav. : )", Toast.LENGTH_SHORT).show();
+                prefHelper.addCollection(mvList_fragment.get(position).getGaeId());
+                return false;
+            }
+        });
 
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override

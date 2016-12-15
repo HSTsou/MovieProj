@@ -38,7 +38,8 @@ import com.example.handsome.thenewtest.util.AppController;
 import com.example.handsome.thenewtest.util.RegexUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -56,10 +57,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.handsome.thenewtest.R.id.map;
+
 /**
  * Created by handsome on 2015/10/28.
  */
-public class TheaterInfoActivity extends AppCompatActivity {
+public class TheaterInfoActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
     CoordinatorLayout rootLayout;
@@ -98,7 +101,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
         getTheaterTimeByJson(thId);
 
 
-        setMap(title, address);
+       // setMap(title, address);
         initInstances(title);
         initNavigation();
         setAppBarDragging(false);//FALSE : not interact with coordinator layout
@@ -158,17 +161,41 @@ public class TheaterInfoActivity extends AppCompatActivity {
 
         AppController.getInstance().addToRequestQueue(req);
     }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
 
+        LatLng coordinate = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 16));
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.addMarker(new MarkerOptions()
+                .title(title)
+                .snippet(address)
+                .position(coordinate))
+                .showInfoWindow();
+    }
 
     void setMap(final  String title, final  String address ){
-
-        new Thread(new Runnable() {
+        ((SupportMapFragment)getSupportFragmentManager()
+                .findFragmentById(map)).getMapAsync(new OnMapReadyCallback() {
 
             @Override
+            public void onMapReady(GoogleMap googleMap) {
+
+                LatLng coordinate = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 15));
+                googleMap.getUiSettings().setZoomControlsEnabled(true);
+                googleMap.addMarker(new MarkerOptions()
+                        .title(title)
+                        .snippet(address)
+                        .position(coordinate));
+            }
+        });
+
+/*
+        new Thread(new Runnable() {
+            @Override
             public void run() {
-
                 handler.post(new Runnable() {
-
                     @Override
                     public void run() {
                         GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -178,10 +205,8 @@ public class TheaterInfoActivity extends AppCompatActivity {
                         map.getUiSettings().setZoomControlsEnabled(true);
                         map.addMarker(new MarkerOptions()
                                 .title(title)
-
                                 .snippet(address)
                                 .position(coordinate))
-
                                 .showInfoWindow();
 
                     }
@@ -190,7 +215,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
 
             }
 
-        }).start();
+        }).start();*/
     }
 
 
@@ -420,6 +445,8 @@ public class TheaterInfoActivity extends AppCompatActivity {
 
         return weeks[week_index];
     }
+
+
 
     static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();

@@ -115,6 +115,15 @@ public class MainActivity extends AppCompatActivity {
         Log.i("hs", "delete MOVIE.TABLE ");
     }
 
+
+    public void clearMovieWithoutFav(){
+        //取出sqlite all mvId
+        //比對sharedperference or sqlite , 刪除沒有加入最愛的資料
+
+        //直接用sharedperference存ID，再去GAE要電影資料，省去更新電影新資訊
+
+    }
+
     private boolean initiateApp() {
         Log.i("hs", "Initiating App");
         newtonCradleLoading.start();

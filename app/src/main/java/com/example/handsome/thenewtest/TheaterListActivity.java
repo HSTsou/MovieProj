@@ -3,6 +3,7 @@ package com.example.handsome.thenewtest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +35,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.api.services.youtube.model.GeoPoint;
 
 import java.text.NumberFormat;
@@ -43,7 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TheaterListActivity extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks,
+public class TheaterListActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private String area;
@@ -58,7 +61,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
     private SharedPreferencesHelper prefHelper;
 
 
-    String areaId,areaName ;
+    String areaId, areaName;
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
     DrawerLayout drawerLayout;
@@ -74,7 +77,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
     private static int UPDATE_INTERVAL = 10000; // 10 sec
     private static int FATEST_INTERVAL = 5000; // 5 sec
     private static int DISPLACEMENT = 10; // 10 meters
-    public static  RecyclerView mRecyclerView;
+    public static RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
@@ -86,6 +89,10 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         handler = new Handler();
         context = this;
         setContentView(R.layout.activity_th_list);
+
+
+        MapsInitializer.initialize(this);
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -103,14 +110,14 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         if (checkPlayServices()) {
             buildGoogleApiClient();
             createLocationRequest();
-             //displayLocation();
+            //displayLocation();
         }
         //togglePeriodicLocationUpdates();
 
     }
 
 
-    private void initNavigation(){
+    private void initNavigation() {
         drawerLayout = (DrawerLayout) findViewById(R.id.thlist_drawerLayout);
         drawerToggle = new ActionBarDrawerToggle(TheaterListActivity.this, drawerLayout, R.string.app_name, R.string.app_name);
         drawerLayout.setDrawerListener(drawerToggle);
@@ -160,7 +167,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
 
     /**
      * Method to verify google play services on the device
-     * */
+     */
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil
                 .isGooglePlayServicesAvailable(this);
@@ -181,7 +188,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
 
     /**
      * Creating google api client object
-     * */
+     */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -192,7 +199,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
 
     /**
      * Creating location request object
-     * */
+     */
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL);
@@ -203,11 +210,14 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
 
     /**
      * Method to display the location on UI
-     * */
+     */
     private void displayLocation() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            mLastLocation = LocationServices.FusedLocationApi
+                    .getLastLocation(mGoogleApiClient);
+        }
 
-        mLastLocation = LocationServices.FusedLocationApi
-                .getLastLocation(mGoogleApiClient);
 
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
@@ -225,12 +235,12 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
 
     /**
      * Method to toggle periodic location updates
-     * */
+     */
     private void togglePeriodicLocationUpdates() {
         if (!mRequestingLocationUpdates) {
             // Changing the button text
 
-            Log.i("hs",  "btn_stop_location_updates" );
+            Log.i("hs", "btn_stop_location_updates");
             mRequestingLocationUpdates = true;
 
             // Starting the location updates
@@ -253,10 +263,12 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
 
     /**
      * Starting the location updates
-     * */
+     */
     protected void startLocationUpdates() {
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
 
     }
@@ -337,36 +349,35 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
     @Override
     protected void onPause() {
         super.onPause();
-       // stopLocationUpdates();
+        // stopLocationUpdates();
     }
 
     private void refresh() {
-        if (mLastLocation!= null) {
+        if (mLastLocation != null) {
 
-                try {
-                            String add = GPSHelper.getAddress(mLastLocation);
-                            Log.i("hs", "adress" + add);
-                            if (add != null)
-                                Toast.makeText(
-                                        context,
-                                        add, Toast.LENGTH_LONG).show();
+            try {
+                String add = GPSHelper.getAddress(mLastLocation);
+                Log.i("hs", "adress" + add);
+                if (add != null)
+                    Toast.makeText(
+                            context,
+                            add, Toast.LENGTH_LONG).show();
 
-                }  catch (Exception e) {
-                    e.printStackTrace();
-                }
-                setBestCase();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setBestCase();
 
         } else {
-                Log.i(TAG, "Cannot get location...");
-                Toast.makeText(getApplicationContext(),
-                        getResources().getString(R.string.open_google_gps),
-                        Toast.LENGTH_LONG).show();
-                load();
-                showContent();
+            Log.i(TAG, "Cannot get location...");
+            Toast.makeText(getApplicationContext(),
+                    getResources().getString(R.string.open_google_gps),
+                    Toast.LENGTH_LONG).show();
+            load();
+            showContent();
         }
 
     }
-
 
 
     private void setBestCase() {
@@ -387,7 +398,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         progressDialog.setMessage(getResources().getString(
                 R.string.cal_distance_ing));
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		/*
+        /*
 		 * progressDialog.setButton("隱藏", new DialogInterface.OnClickListener()
 		 * {
 		 *
@@ -400,6 +411,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         progressDialog.show();
         thread.start();
     }
+
     private void load() {
 
 
@@ -464,7 +476,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         return data;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void getDistances() {
         boolean flag = false;
         int count = 0;
@@ -485,15 +497,15 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
                     double startLongitude = mLastLocation.getLongitude();
 
                     Location.distanceBetween(startLatitude, startLongitude, endLat, endLng, distanceResults);
-                   // Log.i("hs", "distanceResults = " + distanceResults[0]);
+                    // Log.i("hs", "distanceResults = " + distanceResults[0]);
 
                 } else {
-                    Log.i("hs","no location!!");
+                    Log.i("hs", "no location!!");
                 }
 
                 NumberFormat nf = NumberFormat.getInstance();
                 nf.setMaximumFractionDigits(1);
-                theater.put("distance", nf.format(distanceResults[0]/1000) + "");
+                theater.put("distance", nf.format(distanceResults[0] / 1000) + "");
             } catch (Exception e) {
                 Log.e("hs", e.toString());
 
@@ -504,7 +516,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
                 }
 
             }
-         //   data.add(theater);
+            //   data.add(theater);
         }
 
         if (flag) {
@@ -544,7 +556,6 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
     }
 
 
-
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -578,6 +589,7 @@ public class TheaterListActivity extends AppCompatActivity  implements GoogleApi
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

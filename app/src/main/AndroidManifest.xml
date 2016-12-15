@@ -58,7 +58,7 @@
         <activity android:name=".TheaterListActivity"  android:theme="@style/MMTheme" ></activity>
         <activity android:name=".TheaterInfoActivity"  android:theme="@style/MMTheme" ></activity>
         <activity android:name=".WebActivity"  android:configChanges="keyboardHidden|orientation|screenSize" android:theme="@style/MMTheme" ></activity>
-
+        <activity android:name=".CollectionActivity" android:theme="@style/MovieListTheme" ></activity>
 
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParsePushBroadcastReceiver"
