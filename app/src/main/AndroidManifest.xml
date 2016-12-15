@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.handsome.thenewtest" >
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -51,14 +51,14 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".MovieInfoActivity" android:screenOrientation="portrait" android:theme="@style/MovieInfoTheme" ></activity>
+        <activity android:name=".MovieInfoActivity" android:screenOrientation="portrait" android:theme="@style/MovieInfoTheme" />
 
-        <activity android:name=".MovieListActivity" android:theme="@style/MovieListTheme" ></activity>
-        <activity android:name=".TheaterAreaActivity"  android:theme="@style/MMTheme" ></activity>
-        <activity android:name=".TheaterListActivity"  android:theme="@style/MMTheme" ></activity>
-        <activity android:name=".TheaterInfoActivity"  android:theme="@style/MMTheme" ></activity>
-        <activity android:name=".WebActivity"  android:configChanges="keyboardHidden|orientation|screenSize" android:theme="@style/MMTheme" ></activity>
-        <activity android:name=".CollectionActivity" android:theme="@style/MovieListTheme" ></activity>
+        <activity android:name=".MovieListActivity" android:theme="@style/MovieListTheme" />
+        <activity android:name=".TheaterAreaActivity"  android:theme="@style/MMTheme" />
+        <activity android:name=".TheaterListActivity"  android:theme="@style/MMTheme" />
+        <activity android:name=".TheaterInfoActivity"  android:theme="@style/MMTheme" />
+        <activity android:name=".WebActivity"  android:configChanges="keyboardHidden|orientation|screenSize" android:theme="@style/MMTheme" />
+        <activity android:name=".CollectionActivity" android:theme="@style/MovieListTheme"/>
 
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParsePushBroadcastReceiver"
