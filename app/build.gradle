@@ -29,7 +29,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.+'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.android.support:design:23.0.0'
-    compile 'com.google.apis:google-api-services-youtube:v3-rev146-1.20.0'
     compile 'com.google.android.gms:play-services-gcm:9.8.0'
     compile 'com.google.android.gms:play-services-location:9.8.0'
     compile 'com.google.android.gms:play-services-ads:9.8.0'
@@ -38,4 +37,5 @@ dependencies {
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.parse:parse-android:1.+'
     compile 'com.google.android.gms:play-services-maps:9.8.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }

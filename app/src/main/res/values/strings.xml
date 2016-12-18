@@ -1,6 +1,6 @@
 <resources>
     <string name="DEVELOPER_KEY">AIzaSyBqljpgNw5wdfPaF62DV9RJtwVNt8kAZYg</string>
-    <string name="app_name">MovingMovie</string>
+    <string name="app_name">MovingMovie2</string>
     <string name="error_init_failure">Initialization failure: Unable to play video</string>
     <string name="refresh">refresh</string>
     <string name="first_run">首輪</string>

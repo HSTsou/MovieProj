@@ -101,7 +101,7 @@ public class TheaterInfoActivity extends AppCompatActivity implements OnMapReady
         getTheaterTimeByJson(thId);
 
 
-       // setMap(title, address);
+        setMap(title, address);
         initInstances(title);
         initNavigation();
         setAppBarDragging(false);//FALSE : not interact with coordinator layout
@@ -175,9 +175,9 @@ public class TheaterInfoActivity extends AppCompatActivity implements OnMapReady
     }
 
     void setMap(final  String title, final  String address ){
-        ((SupportMapFragment)getSupportFragmentManager()
+       ((SupportMapFragment)getSupportFragmentManager()
                 .findFragmentById(map)).getMapAsync(new OnMapReadyCallback() {
-
+//如果使用則XML需改成 com.google.android.gms.maps.SupportMapFragment ，而不是.MapFragment 20161216
             @Override
             public void onMapReady(GoogleMap googleMap) {
 
@@ -187,35 +187,12 @@ public class TheaterInfoActivity extends AppCompatActivity implements OnMapReady
                 googleMap.addMarker(new MarkerOptions()
                         .title(title)
                         .snippet(address)
-                        .position(coordinate));
+                        .position(coordinate))
+                        .showInfoWindow();
             }
         });
 
-/*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-                        LatLng coordinate = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-                        //map.setMyLocationEnabled(true);
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 16));
-                        map.getUiSettings().setZoomControlsEnabled(true);
-                        map.addMarker(new MarkerOptions()
-                                .title(title)
-                                .snippet(address)
-                                .position(coordinate))
-                                .showInfoWindow();
 
-                    }
-
-                });
-
-            }
-
-        }).start();*/
     }
 
 

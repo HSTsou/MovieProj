@@ -30,13 +30,12 @@ import com.example.handsome.thenewtest.helper.GPSHelper;
 import com.example.handsome.thenewtest.helper.ItemClickSupport;
 import com.example.handsome.thenewtest.helper.SharedPreferencesHelper;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.api.services.youtube.model.GeoPoint;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
 
     private String area;
     private Location location;
-    private GeoPoint geoLocation;
+
     private DatabaseHelper dbHelper;
     private Handler handler;
     private Context context;
@@ -110,7 +109,7 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
         if (checkPlayServices()) {
             buildGoogleApiClient();
             createLocationRequest();
-            //displayLocation();
+            displayLocation();
         }
         //togglePeriodicLocationUpdates();
 
@@ -169,20 +168,22 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
      * Method to verify google play services on the device
      */
     private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(this);
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int resultCode = googleAPI.isGooglePlayServicesAvailable(this);
+
+        if(resultCode == 2){
+            Log.i("hs", "resultCode " + resultCode );
+        }
+
         if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+            if(googleAPI.isUserResolvableError(resultCode)) {
+                googleAPI.getErrorDialog(this, resultCode,
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Toast.makeText(getApplicationContext(),
-                        R.string.beautiful_error, Toast.LENGTH_LONG)
-                        .show();
-                finish();
             }
+            Log.i("hs", "checkPlayServices = false " + resultCode );
             return false;
         }
+        Log.i("hs", "checkPlayServices = " + "true" );
         return true;
     }
 
@@ -212,6 +213,8 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
      * Method to display the location on UI
      */
     private void displayLocation() {
+
+
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             mLastLocation = LocationServices.FusedLocationApi
@@ -413,8 +416,6 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
     }
 
     private void load() {
-
-
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
             data = loadTheaters(db);

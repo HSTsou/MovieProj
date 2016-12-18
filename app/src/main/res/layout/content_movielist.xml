@@ -7,133 +7,167 @@
     android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
     android:layout_marginTop="4dp"
-    app:cardCornerRadius="5dp"
-   >
+    app:cardCornerRadius="5dp">
 
-    <RelativeLayout
-        android:id="@+id/text_layout"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_height="167dp">
+        android:layout_height="match_parent">
 
-        <!--com.example.handsome.thenewtest.util.Chinese-->
-        <TextView
-            android:id="@+id/mvName_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="8dp"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:paddingLeft="?android:listPreferredItemPaddingLeft"
-            android:textColor="@android:color/primary_text_light"
-            android:textSize="19sp"
-            android:layout_toRightOf="@+id/mv_pic"
-            android:singleLine="true"
-            android:layout_centerInParent="false"
-            android:layout_alignTop="@+id/mv_pic"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentStart="false"
-            android:layout_centerHorizontal="false" />
 
-        <TextView
-            android:id="@+id/enName_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/mv_pic"
-            android:fontFamily="sans-serif-light"
-            android:paddingLeft="?android:listPreferredItemPaddingLeft"
-            android:singleLine="true"
-            android:textColor="@android:color/primary_text_light"
-            android:textSize="18sp"
-            android:text="enName"
-            android:layout_centerInParent="true" />
 
-        <TextView
-            android:id="@+id/playingDate_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:padding="@dimen/codelab_fab_margin_bottom"
-            android:textColor="@color/transparent_half"
-            android:textSize="14sp"
-            tools:text="date"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentEnd="false"
-            android:layout_alignRight="@+id/mv_pic"
-            android:layout_centerInParent="false"
-            android:layout_centerVertical="false"
-            />
-
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/mv_pic"
-            android:layout_width="85dp"
-            android:layout_height="120dp"
-            android:ellipsize="end"
-            android:paddingBottom="4dp"
-            android:paddingLeft="?android:listPreferredItemPaddingLeft"
-            android:paddingTop="4dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <LinearLayout
-            android:id="@+id/rating_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="?android:listPreferredItemPaddingLeft"
-
-            android:padding="@dimen/codelab_fab_margin_bottom"
-            android:layout_below="@+id/enName_text"
-            android:layout_toRightOf="@+id/mv_pic"
-            android:layout_toEndOf="@+id/mv_pic"
-            android:layout_marginTop="8dp">
-
-            <ImageView
-                android:id="@+id/IMDb_img"
-                android:layout_width="27dp"
-                android:layout_height="27dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/imdb_icon" />
-
+            <!--com.example.handsome.thenewtest.util.Chinese-->
             <TextView
-                android:id="@+id/IMDbRating_text"
+                android:id="@+id/mvName_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/IMDb_img"
-                android:layout_toRightOf="@+id/IMDb_img"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/transparent_half"
-                android:textSize="14sp"
-                tools:text="IMDb" />
-
-            <ImageView
-                android:id="@+id/tomato_img"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/tomato_icon"
-                android:paddingLeft="3dp"/>
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="19sp"
+                android:text="mvName"
+                app:layout_constraintLeft_toRightOf="@+id/mv_pic"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                tools:layout_editor_absoluteY="8dp"
+                android:ellipsize="end" />
 
             <TextView
-                android:id="@+id/tomato_text"
+                android:id="@+id/enName_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/tomato_img"
-                android:layout_toRightOf="@+id/tomato_img"
-                android:layout_gravity="center_vertical"
+                android:layout_centerInParent="true"
+                android:fontFamily="sans-serif-light"
+                android:text="enName"
+                android:maxLines="1"
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/mvName_text"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintLeft_toRightOf="@+id/mv_pic"
+                android:layout_marginLeft="8dp"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/playingDate_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
                 android:textColor="@color/transparent_half"
                 android:textSize="14sp"
-                tools:text="tomatos" />
+                tools:text="date"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginRight="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="8dp" />
 
-        </LinearLayout>
-    </RelativeLayout>
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/mv_pic"
+                android:layout_width="85dp"
+                android:layout_height="94dp"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:adjustViewBounds="false"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+
+
+                <ImageView
+                    android:id="@+id/IMDb_img"
+                    android:layout_width="27dp"
+                    android:layout_height="27dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/imdb_icon"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintLeft_toRightOf="@+id/mv_pic"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/enName_text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/IMDbRating_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/IMDb_img"
+                    android:layout_gravity="center_vertical"
+                    android:layout_toRightOf="@+id/IMDb_img"
+                    android:textColor="@color/transparent_half"
+                    android:textSize="14sp"
+                    tools:text="IMDb"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintLeft_toRightOf="@+id/IMDb_img"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/enName_text" />
+
+                <ImageView
+                    android:id="@+id/tomato_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="3dp"
+                    android:src="@drawable/tomato_icon"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintLeft_toRightOf="@+id/IMDbRating_text"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/enName_text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/tomato_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tomato_img"
+                    android:layout_gravity="center_vertical"
+                    android:layout_toRightOf="@+id/tomato_img"
+                    android:textColor="@color/transparent_half"
+                    android:textSize="14sp"
+                    tools:text="tomatos"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintLeft_toRightOf="@+id/tomato_img" />
+
+        <android.support.constraint.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/guideline2"
+            app:layout_constraintGuide_begin="63dp"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteY="63dp"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <android.support.constraint.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/guideline3"
+            app:layout_constraintGuide_begin="200dp"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="200dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <android.support.constraint.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/guideline5"
+            app:layout_constraintGuide_begin="31dp"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteY="31dp"
+            tools:layout_editor_absoluteX="0dp" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 
 </com.example.handsome.thenewtest.util.CustomCardView>
