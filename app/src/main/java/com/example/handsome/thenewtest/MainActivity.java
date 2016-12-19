@@ -31,7 +31,6 @@ import com.example.handsome.thenewtest.helper.SharedPreferencesHelper;
 import com.example.handsome.thenewtest.third.NewtonCradleLoading;
 import com.example.handsome.thenewtest.util.AppController;
 import com.google.gson.Gson;
-import com.parse.ParseAnalytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("hs", "on creating");
         setContentView(R.layout.activity_main);
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
         helper = new DatabaseHelper(this);
         db = helper.getWritableDatabase();
@@ -201,9 +199,21 @@ public class MainActivity extends AppCompatActivity {
                         newtonCradleLoading.stop();
                         swipeView.setRefreshing(false);
                         info_text.setText(R.string.update_data_finish);
+                        //check firebase messaging including mvId, if turn into this movie page.
+                        Intent intent = getIntent();
+                        String mvId = intent.getStringExtra("mvId");
+                        if (mvId!=null){
+                            Log.d("FCM", "mvId:"+mvId);
+                            Intent i = new Intent();
+                            i.setClass(context, MovieInfoActivity.class);
+                            i.putExtra("mvId", mvId);
+                            startActivity(i);
+                        }else{
+                            startActivity(new Intent(MainActivity.this,
+                                    MovieListActivity.class));
+                        }
 
-                        startActivity(new Intent(MainActivity.this,
-                                MovieListActivity.class));
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -253,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     boolean parseMvJsonAndStore(JSONArray response) {
-
         db.beginTransaction();
         playingMvId = new ArrayList<>();//check movie is playing or not.
         Log.i("hs", "playing Mv number :" + response.length());
