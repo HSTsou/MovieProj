@@ -44,7 +44,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     static final String MM_URL = "https://movingmoviezero.appspot.com/";
-
     final static String TAG = "hs";
     Context context;
     private SharedPreferencesHelper prefHelper;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("hs", "on creating");
+        Log.i(TAG, "on creating");
         setContentView(R.layout.activity_main);
 
         helper = new DatabaseHelper(this);
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "Initiation failed");
             }
         } else {
-            Log.i("hs", "notFirstTime");
+            Log.i(TAG, "notFirstTime");
             clearTable();
         }
     }
@@ -110,20 +109,18 @@ public class MainActivity extends AppCompatActivity {
     public void clearTable() {
        // SQLiteDatabase db = helper.getWritableDatabase();
         db.delete(DBConstants.MOVIE.TABLE_NAME, null, null);
-        Log.i("hs", "delete MOVIE.TABLE ");
+        Log.i(TAG, "delete MOVIE.TABLE ");
     }
 
 
     public void clearMovieWithoutFav(){
         //取出sqlite all mvId
         //比對sharedperference or sqlite , 刪除沒有加入最愛的資料
-
         //直接用sharedperference存ID，再去GAE要電影資料，省去更新電影新資訊
-
     }
 
     private boolean initiateApp() {
-        Log.i("hs", "Initiating App");
+        Log.i(TAG, "Initiating App");
         newtonCradleLoading.start();
         info_text.setText(R.string.init_data_ing);
         DatabaseHelper dbHelper = new DatabaseHelper(this);
@@ -137,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 db.setTransactionSuccessful();
                 return true;
             } catch (IOException e) {
-                Log.e("hs", e.toString());
+                Log.e(TAG, e.toString());
             }
         } finally {
 
@@ -180,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAllMvInfoByJSON() {
-        Log.i("hs", "getAllMvInfo");
+        Log.i(TAG, "getAllMvInfo");
         info_text.setText(R.string.update_data_ing);
         final String allmV = "all-mv";
         String url = MM_URL + allmV;
@@ -191,10 +188,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         //Log.i(TAG, response.toString());
                         if (parseMvJsonAndStore(response)) {
-                            Log.i("hs", "movie Done ");
+                            Log.i(TAG, "movie Done ");
 
                         } else {
-                            Log.i("hs", "what's wrong? ");
+                            Log.i(TAG, "what's wrong? ");
                         }
                         newtonCradleLoading.stop();
                         swipeView.setRefreshing(false);
@@ -219,22 +216,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Log.i("hs", "Error = " + error.getMessage());
+                Log.i(TAG, "Error = " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         R.string.beautiful_error, Toast.LENGTH_SHORT).show();
                 info_text.setText(R.string.update_data_error);
                 swipeView.setRefreshing(false);
 
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    Log.i("hs", "no connection|timeout Error = " + error.getMessage());
+                    Log.i(TAG, "no connection|timeout Error = " + error.getMessage());
                 } else if (error instanceof AuthFailureError) {
-                    Log.i("hs", "AuthFailureError Error = " + error.getMessage());
+                    Log.i(TAG, "AuthFailureError Error = " + error.getMessage());
                 } else if (error instanceof ServerError) {
-                    Log.i("hs", "ServerError Error = " + error.getMessage());
+                    Log.i(TAG, "ServerError Error = " + error.getMessage());
                 } else if (error instanceof NetworkError) {
-                    Log.i("hs", "NetworkError Error = " + error.getMessage());
+                    Log.i(TAG, "NetworkError Error = " + error.getMessage());
                 } else if (error instanceof ParseError) {
-                    Log.i("hs", "ParseError Error = " + error.getMessage());
+                    Log.i(TAG, "ParseError Error = " + error.getMessage());
                 }
             }
 
@@ -265,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
     boolean parseMvJsonAndStore(JSONArray response) {
         db.beginTransaction();
         playingMvId = new ArrayList<>();//check movie is playing or not.
-        Log.i("hs", "playing Mv number :" + response.length());
+        Log.i(TAG, "playing Mv number :" + response.length());
         try {
             for (int i = 0; i < response.length(); i++) {
                 try {
@@ -275,12 +272,12 @@ public class MainActivity extends AppCompatActivity {
                     String GAEId = null;
                     try {
                         GAEId = obj.getJSONObject("key").getString("id");
-                        //Log.i("hs", " GAEId" + GAEId);
+                        //Log.i(TAG, " GAEId" + GAEId);
                         playingMvId.add(GAEId);
 
                         for (String unit : DatabaseHelper.COL_MOVIE) {
                             if (!obj.isNull(unit)) {
-                                if (unit == "playingDate") {
+                                if (unit.equals("playingDate")) {
                                     String formatPlayingDate = obj.getString(unit).replaceAll("/", "-");
                                     cv.put(unit, formatPlayingDate);
                                     continue;
@@ -303,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.i("hs", "JSONException@parsing" + e);
+                        Log.i(TAG, "JSONException@parsing" + e);
                     }
                     cv.put(DBConstants.MOVIE.ID, GAEId);
                     helper.insertMovieInfo(db, cv);
@@ -311,14 +308,14 @@ public class MainActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.i("hs", " getAllMvInfo JSONException" + e);
+                    Log.i(TAG, " getAllMvInfo JSONException" + e);
 
                 }
             }
             db.setTransactionSuccessful();
 
         } finally {
-            //Log.i("hs", "  db.endTransaction(); ");
+            //Log.i(TAG, "  db.endTransaction(); ");
             db.endTransaction();
             db.close();
         }
