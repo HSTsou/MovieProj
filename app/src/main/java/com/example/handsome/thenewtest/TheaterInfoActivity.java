@@ -68,7 +68,6 @@ public class TheaterInfoActivity extends AppCompatActivity implements OnMapReady
     CoordinatorLayout rootLayout;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
-
     Toolbar toolbar;
     TabLayout tabLayout;
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -191,8 +190,6 @@ public class TheaterInfoActivity extends AppCompatActivity implements OnMapReady
                         .showInfoWindow();
             }
         });
-
-
     }
 
 

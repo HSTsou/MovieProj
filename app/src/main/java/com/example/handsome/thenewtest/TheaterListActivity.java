@@ -445,7 +445,7 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
                 Log.i("hs", "position = " + position);
                 // Log.i("hs", "item = " + allData.get(position));
 
-                String thId = data.get(position).get(DBConstants.THEATER.ID);
+                String thId = data.get(position).get(DatabaseHelper.Theater.ID);
                 Intent i = new Intent();
                 i.setClass(context, TheaterInfoActivity.class);
 
@@ -486,9 +486,9 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
         for (Map<String, String> theater : data) {
 
             double endLat = Double.parseDouble(theater
-                    .get(DBConstants.THEATER.LAT));
+                    .get(DatabaseHelper.Theater.LAT));
             double endLng = Double.parseDouble(theater
-                    .get(DBConstants.THEATER.LNG));
+                    .get(DatabaseHelper.Theater.LNG));
 
             float[] distanceResults = new float[2];
             try {

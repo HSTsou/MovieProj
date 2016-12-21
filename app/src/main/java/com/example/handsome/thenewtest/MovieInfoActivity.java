@@ -112,7 +112,7 @@ public class MovieInfoActivity extends AppCompatActivity {
                 ContentValues cv = new ContentValues();
 
                 String GAEId = obj.getJSONObject("key").getString("id");
-                cv.put(DBConstants.MOVIE.ID, GAEId);
+                cv.put(DatabaseHelper.Movie.ID, GAEId);
 
                 for(String unit : DatabaseHelper.COL_MOVIE){
                     if(!obj.isNull(unit)){
@@ -128,13 +128,13 @@ public class MovieInfoActivity extends AppCompatActivity {
                 }
 
                 Gson gson = new Gson();
-                if(!obj.isNull(DBConstants.MOVIE.YOUTUBE_URL_LIST)){
-                    String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.YOUTUBE_URL_LIST)));
-                    cv.put(DBConstants.MOVIE.YOUTUBE_URL_LIST, youtubeListString);
+                if(!obj.isNull(DatabaseHelper.Movie.YOUTUBE_URL_LIST)){
+                    String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.YOUTUBE_URL_LIST)));
+                    cv.put(DatabaseHelper.Movie.YOUTUBE_URL_LIST, youtubeListString);
                 }
-                if(!obj.isNull(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)) {
-                    String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)));
-                    cv.put(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
+                if(!obj.isNull(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)) {
+                    String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)));
+                    cv.put(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
                 }
 
                 helper.insertMovieInfo(db, cv);

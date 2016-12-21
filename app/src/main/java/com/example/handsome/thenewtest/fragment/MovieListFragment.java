@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.handsome.thenewtest.DBConstants;
 import com.example.handsome.thenewtest.MovieInfoActivity;
 import com.example.handsome.thenewtest.R;
 import com.example.handsome.thenewtest.adapter.MovieListAdapter;
@@ -119,7 +118,7 @@ public class MovieListFragment extends Fragment {
         String state = bundle.getString("state");
         Cursor c = null;
         try {
-            c = helper.getMovieListData(db, DBConstants.MOVIE.PLAYING_DATE, state);
+            c = helper.getMovieListData(db, null, state);
 
             while (c.moveToNext()){
                 Movie mv = new Movie();

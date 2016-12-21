@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.handsome.thenewtest.DBConstants;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,44 +58,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Movie.YOUTUBE_URL_LIST
     };
     public static final String[] COL_MV_LIST = {
-            DBConstants.MOVIE.STATE,
-            DBConstants.MOVIE.AT_MOVIES_MV_ID,
-            DBConstants.MOVIE.PLAYING_DATE,
-            DBConstants.MOVIE.MAIN_NAME,
-            DBConstants.MOVIE.EN_NAME,
-            DBConstants.MOVIE.IMG_LINK,
-            DBConstants.MOVIE.IMDb_RATING,
-            DBConstants.MOVIE.TOMATOES_RATING,
+            Movie.STATE,
+            Movie.AT_MOVIES_MV_ID,
+            Movie.PLAYING_DATE,
+            Movie.MAIN_NAME,
+            Movie.EN_NAME,
+            Movie.IMG_LINK,
+            Movie.IMDb_RATING,
+            Movie.TOMATOES_RATING,
             Movie.ID};
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private static class Movie {
-        static final String TABLE_NAME = "Movie";
-        static final String ID = "id";
-        static final String PLAYING_DATE = "playingDate";
-        static final String AT_MOVIES_MV_ID = "atMoviesMvId";
-        static final String MAIN_NAME = "mvName";
-        static final String EN_NAME = "enName";
-        static final String GATE = "gate";
-        static final String IMG_LINK = "imgLink";
-        static final String LENGTH = "mvlength";//GAE ....mvLength
-        static final String DIRECTOR = "director";
-        static final String ACTOR = "actor";
+    public static class Movie {
+        public  static final String TABLE_NAME = "Movie";
+        public static final String ID = "id";
+        public  static final String PLAYING_DATE = "playingDate";
+        public static final String AT_MOVIES_MV_ID = "atMoviesMvId";
+        public static final String MAIN_NAME = "mvName";
+        public static final String EN_NAME = "enName";
+        public  static final String GATE = "gate";
+        public static final String IMG_LINK = "imgLink";
+        public static final String LENGTH = "mvlength";//GAE ....mvLength
+        public static final String DIRECTOR = "director";
+        public static final String ACTOR = "actor";
         // String LINK_LIST = "linkList";
-        static final String STORY = "story";
-        static final String UPDATE_DATE = "updateDate";
-        static final String MV_TIME_STR = "mvTimeStr";
-        static final String WRITER = "writer";
-        static final String STATE = "state";
-        static final String MV_IMDB_URL = "mv_IMDbMoblieUrl";
-        static final String MV_TOMATOES_URL = "mv_tomatoesMoblieUrl";//mobile in GAE was spelled wrong.
-        static final String IMDb_RATING = "IMDbRating";
-        static final String TOMATOES_RATING = "tomatoesRating";
-        static final String YOUTUBE_URL_LIST = "youtubeUrlList";
-        static final String ALL_MV_TH_SHOWTIME_LIST = "allMvThShowtimeList";
+        public static final String STORY = "story";
+        public static final String UPDATE_DATE = "updateDate";
+        public static final String MV_TIME_STR = "mvTimeStr";
+        public static final String WRITER = "writer";
+        public static final String STATE = "state";
+        public static final String MV_IMDB_URL = "mv_IMDbMoblieUrl";
+        public static final String MV_TOMATOES_URL = "mv_tomatoesMoblieUrl";//mobile in GAE was spelled wrong.
+        public static final String IMDb_RATING = "IMDbRating";
+        public static final String TOMATOES_RATING = "tomatoesRating";
+        public static final String YOUTUBE_URL_LIST = "youtubeUrlList";
+        public static final String ALL_MV_TH_SHOWTIME_LIST = "allMvThShowtimeList";
 
         public static final String buildMovieSQL() {
             StringBuilder s = new StringBuilder();
@@ -121,15 +119,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    private static class Theater {
-        static final String TABLE_NAME = "Theater";
-        static final String ID = "_id";
-        static final String NAME = "name";
-        static final String ADDRESS = "address";
-        static final String PHONE = "phone";
-        static final String AREA = "area";
-        static final String LAT = "lat";
-        static final String LNG = "lng";
+    public static class Theater {
+        public static final String TABLE_NAME = "Theater";
+        public static final String ID = "_id";
+        public static final String NAME = "name";
+        public static final String ADDRESS = "address";
+        public  static final String PHONE = "phone";
+        public static final String AREA = "area";
+        public static final String LAT = "lat";
+        public static final String LNG = "lng";
 
         public static final String buildTheaterSQL() {
             StringBuilder s = new StringBuilder();
@@ -143,10 +141,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    private static class ThShowtime {
-        static final String TABLE_NAME = "Th_Showtime";
-        static final String TH_ID = "thId";
-        static final String TIME_INFO_STR = "timeInfoStr";
+    public static class ThShowtime {
+        public static final String TABLE_NAME = "Th_Showtime";
+        public static final String TH_ID = "thId";
+        public static final String TIME_INFO_STR = "timeInfoStr";
         //String UPDATE_TIME= "updateTime";
 
         public static final String buildThShowtimeSQL() {

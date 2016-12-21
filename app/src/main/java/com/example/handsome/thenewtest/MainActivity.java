@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void clearTable() {
        // SQLiteDatabase db = helper.getWritableDatabase();
-        db.delete(DBConstants.MOVIE.TABLE_NAME, null, null);
+        db.delete(DatabaseHelper.Movie.TABLE_NAME, null, null);
         Log.i(TAG, "delete MOVIE.TABLE ");
     }
 
@@ -289,20 +289,20 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Gson gson = new Gson();
-                        if (!obj.isNull(DBConstants.MOVIE.YOUTUBE_URL_LIST)) {
-                            String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.YOUTUBE_URL_LIST)));
-                            cv.put(DBConstants.MOVIE.YOUTUBE_URL_LIST, youtubeListString);
+                        if (!obj.isNull(DatabaseHelper.Movie.YOUTUBE_URL_LIST)) {
+                            String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.YOUTUBE_URL_LIST)));
+                            cv.put(DatabaseHelper.Movie.YOUTUBE_URL_LIST, youtubeListString);
                         }
-                        if (!obj.isNull(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)) {
-                            String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST)));
-                            cv.put(DBConstants.MOVIE.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
+                        if (!obj.isNull(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)) {
+                            String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)));
+                            cv.put(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.i(TAG, "JSONException@parsing" + e);
                     }
-                    cv.put(DBConstants.MOVIE.ID, GAEId);
+                    cv.put(DatabaseHelper.Movie.ID, GAEId);
                     helper.insertMovieInfo(db, cv);
 
 
