@@ -64,10 +64,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     String title, url;
     DatabaseHelper helper ;
     SQLiteDatabase db;
-
-
     Context c;
-
     Movie m;
     String mvId;//accurately,  gatId of movie
     String youtubeThumbnail_Url = "http://img.youtube.com/vi/%s/0.jpg"; //0 : larger img, 1,2,3 different image but small.
