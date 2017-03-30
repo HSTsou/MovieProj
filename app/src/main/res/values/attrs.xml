@@ -22,4 +22,14 @@
         <attr name="loading_color" format="color"/>
         <attr name="shadow_position" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="MyView">
+        <attr name="spacing" format="float"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="WrapLayout">
+        <attr name="horizontalSpacing" format="dimension"/>
+        <attr name="verticalSpacing" format="dimension"/>
+    </declare-styleable>
+
 </resources>

@@ -31,9 +31,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.handsome.thenewtest.entity.TheaterTime;
 import com.example.handsome.thenewtest.fragment.TheaterTimeFragment;
-import com.example.handsome.thenewtest.fragment.TheaterWebFragment;
 import com.example.handsome.thenewtest.helper.DatabaseHelper;
 import com.example.handsome.thenewtest.helper.JSONHelper;
+import com.example.handsome.thenewtest.model.TheaterInfo;
 import com.example.handsome.thenewtest.util.AppController;
 import com.example.handsome.thenewtest.util.RegexUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,6 +56,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.example.handsome.thenewtest.R.id.map;
 
@@ -90,13 +95,14 @@ public class TheaterInfoActivity extends AppCompatActivity {
         thId = (String) bundle.get("thId");
         Log.i("hs", "thId = " + thId);
 
-        String[] thInfo = setThInfoFromDB(thId);
-        title = thInfo[1];
-        address = thInfo[2];
-        lat = thInfo[4];
-        lng = thInfo[5];
+        TheaterInfo thInfo = setThInfoFromDB(thId);
+        title = thInfo.getThName();
+        address = thInfo.getThAddress();
+        lat = thInfo.getLat();
+        lng = thInfo.getLng();
 
-        getTheaterTimeByJson(thId);
+        //getTheaterTimeByJson(thId);
+        getTheaterTimeByRxJava(thId);
 
         setMap(title, address);
         initInstances(title);
@@ -106,7 +112,6 @@ public class TheaterInfoActivity extends AppCompatActivity {
     }
 
     void parseThTimeJsonAndStore(JSONArray response) {
-        Log.i("hs", "parseMvInfoJsonAndStore");
         DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -118,23 +123,46 @@ public class TheaterInfoActivity extends AppCompatActivity {
 
                 Gson gson = new Gson();
                 String inputString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray("thMvShowtimeList")));
-                // Log.i("hs", "thId" + thId );
                 helper.insertTheaterTimeInfo(db, thId.substring(10), inputString);
-
 
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.i("hs", " getAllMvInfo JSONException" + e);
-
             } finally {
                 db.close();
             }
-
         }
     }
 
+    void getTheaterTimeByRxJava(String thId) {
+        MovieAPI mvApi = ServiceGenerator.createService(MovieAPI.class);
+        Observable<String> call = mvApi.getTheaterInfoStr(thId);
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        setViewPager();
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        Toast.makeText(getApplicationContext(),
+                                R.string.beautiful_error, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(String jsonArray) {
+                        try {
+                            JSONArray json = new JSONArray(jsonArray);
+                            parseThTimeJsonAndStore(json);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
     void getTheaterTimeByJson(String thId) {
-        Log.i("hs", "getTheaterTimeByJson");
         JsonArrayRequest req = new JsonArrayRequest(TH_TIME_URL + thId,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -142,16 +170,13 @@ public class TheaterInfoActivity extends AppCompatActivity {
                         //Log.i(TAG, response.toString());
                         parseThTimeJsonAndStore(response);
                         setViewPager();
-
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // VolleyLog.d(TAG, "Error: " + error.getMessage());
                 Log.i("hs", "Error = " + error.getMessage());
                 Toast.makeText(getApplicationContext(),
                         R.string.beautiful_error, Toast.LENGTH_SHORT).show();
-
             }
 
         });
@@ -177,7 +202,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
             //如果使用則XML需改成 com.google.android.gms.maps.SupportMapFragment ，而不是.MapFragment 20161216
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                if ("".equals(lat) || "".equals(lng)||lat==null||lng==null) {
+                if ("".equals(lat) || "".equals(lng) || lat == null || lng == null) {
                     lat = "0";
                     lng = "0";
                 }
@@ -195,9 +220,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
         });
     }
 
-
     private void initInstances(String title) {
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar.setLogo(R.drawable.mm_logo);
         setSupportActionBar(toolbar);
@@ -210,9 +233,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
 
         // rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
-
     }
-
 
     private void setAppBarDragging(final boolean newValue) {
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
@@ -265,27 +286,24 @@ public class TheaterInfoActivity extends AppCompatActivity {
 
     }
 
-    String[] setThInfoFromDB(String thId) {
+    private TheaterInfo setThInfoFromDB(String thId) {
         Log.i("hs", "setThInfoFromDB");
         DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        String[] thInfo = new String[6];
-
+        TheaterInfo thInfo = new TheaterInfo();
         Cursor c = null;
         try {
             c = helper.getTheaterInfoById(db, thId);
 
             if (c.moveToFirst()) {
-                thInfo[0] = c.getString(0);//thId
-                thInfo[1] = c.getString(1);//thName
-                thInfo[2] = c.getString(2);//thAddress
-                thInfo[3] = c.getString(3);//phone
-                thInfo[4] = c.getString(4);//lat
-                thInfo[5] = c.getString(5);//lng
-                //Log.i("hs", " lat, lng = "+ c.getString(4) +", " +c.getString(5));
+                thInfo.setThId(c.getString(0));
+                thInfo.setThName(c.getString(1));
+                thInfo.setThAddress(c.getString(2));
+                thInfo.setPhone(c.getString(3));
+                thInfo.setLat(c.getString(4));
+                thInfo.setLng(c.getString(5));
             }
-
         } finally {
             c.close();
             db.close();
@@ -294,7 +312,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
         return thInfo;
     }
 
-    List<TheaterTime> setThTimeByDateFromDB() {
+    private List<TheaterTime> setTheaterTimeByDateFromDB() {
         List<TheaterTime> thTimeList = new ArrayList<TheaterTime>();
         DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -306,9 +324,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
             c = helper.getTheaterTimeInfoById(db, thId);
             if (c.moveToFirst()) {
                 thTimeInfoStr_outArray = c.getString(1);
-
             }
-
         } finally {
             c.close();
             db.close();
@@ -320,8 +336,6 @@ public class TheaterInfoActivity extends AppCompatActivity {
         ArrayList<String> thTimeInfoStr_List;
         if (thTimeInfoStr_outArray.length() != 0 || !thTimeInfoStr_outArray.equalsIgnoreCase("")) {
             thTimeInfoStr_List = gson.fromJson(thTimeInfoStr_outArray, type);
-            Log.i("hs", " thTimeInfoStr_outArray = " + thTimeInfoStr_outArray);
-
 
             String date;
             String mvAndTimeStr;
@@ -343,17 +357,12 @@ public class TheaterInfoActivity extends AppCompatActivity {
                     }
 
                 }
-
             } catch (JSONException e) {
 
             }
-
             return thTimeList;
         }
-
-
         return null;
-
     }
 
     private void setViewPager() {
@@ -366,8 +375,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
-        List<TheaterTime> thTimeList = setThTimeByDateFromDB();
+        List<TheaterTime> thTimeList = setTheaterTimeByDateFromDB();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         RegexUtil rex;
         if (thTimeList != null) {
@@ -379,23 +387,18 @@ public class TheaterInfoActivity extends AppCompatActivity {
                     String s = thObj.getThDate();
                     s = s.substring(s.length() - 9, s.length() - 1);
                     adapter.addFrag(TheaterTimeFragment.createInstance(thObj.getAllThTimeStr()), s + " " + getDayOfWeek(s));//20151119 (四)
-
-
                 } else {////"/showtime/t07703/a07/"
                     adapter.addFrag(TheaterTimeFragment.createInstance(thObj.getAllThTimeStr()), "今天");
                 }
-
             }
             viewPager.setAdapter(adapter);
         } else {
-            adapter.addFrag(TheaterWebFragment.createInstance(thId), "網站");
+            // adapter.addFrag(TheaterWebFragment.createInstance(thId), "網站");
             viewPager.setAdapter(adapter);
         }
-
-
     }
 
-    String getDayOfWeek(String dateNum) {
+    private String getDayOfWeek(String dateNum) {
 
         String format = "yyyyMMdd";
 
@@ -423,7 +426,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
     }
 
 
-    static class ViewPagerAdapter extends FragmentPagerAdapter {
+    private static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -467,7 +470,6 @@ public class TheaterInfoActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.theater_info_menu, menu);
         return true;
     }

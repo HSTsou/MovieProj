@@ -26,4 +26,6 @@
     <color name="book_loading_background">#ffffff</color>
     <color name="book_loading_book">#ff33b5e5</color>
     <color name="book_loading_page">#ffffff</color>
+
+    <color name="common_white_bg1">#fff</color>
 </resources>

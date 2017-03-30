@@ -82,10 +82,8 @@ public class MovieListActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-
         //setTitle(getString(R.string.app_name));
-      //  mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
+        //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
     }
 
     private void initViewPagerAndTabs() {
@@ -104,8 +102,6 @@ public class MovieListActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
     }
-
-
 
     static class PagerAdapter extends FragmentPagerAdapter {// FragmentStatePagerAdapter
 
@@ -164,12 +160,9 @@ public class MovieListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item))
             return true;
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.menu_refresh) {
             return true;
         }

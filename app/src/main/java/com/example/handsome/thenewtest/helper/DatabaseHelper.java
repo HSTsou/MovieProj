@@ -73,13 +73,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public static class Movie {
-        public  static final String TABLE_NAME = "Movie";
+        public static final String TABLE_NAME = "Movie";
         public static final String ID = "id";
-        public  static final String PLAYING_DATE = "playingDate";
+        public static final String PLAYING_DATE = "playingDate";
         public static final String AT_MOVIES_MV_ID = "atMoviesMvId";
         public static final String MAIN_NAME = "mvName";
         public static final String EN_NAME = "enName";
-        public  static final String GATE = "gate";
+        public static final String GATE = "gate";
         public static final String IMG_LINK = "imgLink";
         public static final String LENGTH = "mvlength";//GAE ....mvLength
         public static final String DIRECTOR = "director";
@@ -124,14 +124,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String ID = "_id";
         public static final String NAME = "name";
         public static final String ADDRESS = "address";
-        public  static final String PHONE = "phone";
+        public static final String PHONE = "phone";
         public static final String AREA = "area";
         public static final String LAT = "lat";
         public static final String LNG = "lng";
 
-        public static final String buildTheaterSQL() {
+        static String buildTheaterSQL() {
             StringBuilder s = new StringBuilder();
-            s.append(Theater.TABLE_NAME ).append(" (")
+            s.append(Theater.TABLE_NAME).append(" (")
                     .append(Theater.ID).append(" text primary key, ").append(Theater.NAME)
                     .append(" text not null, ").append(Theater.ADDRESS).append(" text not null, ")
                     .append(Theater.PHONE).append(" text, ").append(Theater.AREA).append(" text not null, ")
@@ -150,7 +150,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static final String buildThShowtimeSQL() {
             StringBuilder s = new StringBuilder();
             s.append(ThShowtime.TABLE_NAME).append(" (")
-                   .append(ThShowtime.TH_ID).append(" text primary key, ").append(ThShowtime.TIME_INFO_STR)
+                    .append(ThShowtime.TH_ID).append(" text primary key, ").append(ThShowtime.TIME_INFO_STR)
                     .append(" text);");
             return s.toString();
         }
@@ -182,7 +182,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @SuppressWarnings("unchecked")
     private ContentValues getContentValues(JSONObject json) {
         ContentValues values = new ContentValues();
-        Log.i("TEST", "ContentValues values = new ContentValues();");
         for (Iterator<String> i = json.keys(); i.hasNext(); ) {
             String key = i.next();
             try {
@@ -195,7 +194,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return values;
     }
 
-    //20151108
     public long insertTheaterTimeInfo(SQLiteDatabase db, String thId,
                                       String timeInfoStr) {
         Log.i("hs", "insertTheaterTimeInfo");
@@ -206,7 +204,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.replace(ThShowtime.TABLE_NAME, null, values);
     }
 
-    //20151108
     public Cursor getTheaterTimeInfoById(SQLiteDatabase db, String thId) {
         String WHERE = ThShowtime.TH_ID + " = ?";
         String[] ARGS = {thId};
@@ -214,7 +211,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null);
     }
 
-    //20151117
     public Cursor getTheaterInfoById(SQLiteDatabase db, String thId) {
         String WHERE = Theater.ID + " = ?";
         String[] ARGS = {thId};
@@ -222,7 +218,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null);
     }
 
-    //20151117
     public Cursor getGaeIDByAtsMovieMvId(SQLiteDatabase db, String mvId) {
         String[] array = {Movie.ID, Movie.AT_MOVIES_MV_ID};
         String WHERE = Movie.AT_MOVIES_MV_ID + " = ?";
@@ -231,13 +226,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, null);
     }
 
-    //20151110
     public long insertMovieInfo(SQLiteDatabase db, ContentValues values) {
-        //   Log.i("hs", " insertMovieInfo" );
         return db.replace(Movie.TABLE_NAME, null, values);
     }
 
-    //20151111
     public Cursor getMovieListData(SQLiteDatabase db, String orderBy, String state) {
         if (orderBy == null)
             orderBy = Movie.PLAYING_DATE;
@@ -249,7 +241,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null, null, orderBy + " DESC");
     }
 
-    //20151111
     public Cursor getMovieInfoByAtsMovieId(SQLiteDatabase db, String mvId) {
 
         String WHERE = Movie.ID + " = ?";
@@ -258,7 +249,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.query(Movie.TABLE_NAME, COL_MOVIE_INFO, WHERE, ARGS,
                 null, null, null);
     }
-
 
     public long insertTheater(SQLiteDatabase db, String[] theater, String area) {
         ContentValues values = new ContentValues();
