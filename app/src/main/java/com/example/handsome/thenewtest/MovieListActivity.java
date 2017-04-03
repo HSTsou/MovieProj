@@ -14,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -120,7 +119,7 @@ public class MovieListActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Log.i("hs", "MovieListFragment.getInstance(position);");
+            //Log.i("hs", "MovieListFragment.getInstance(position);");
             return fragmentList.get(position);
 
            //return MovieListFragment.getInstance(position);

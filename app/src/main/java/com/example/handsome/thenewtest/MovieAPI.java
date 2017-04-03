@@ -1,7 +1,7 @@
 package com.example.handsome.thenewtest;
 
-import retrofit2.http.Field;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -10,8 +10,6 @@ import rx.Observable;
 
 public interface MovieAPI {
 
-    static final String TH_TIME_URL = "https://movingmoviezero.appspot.com/thInfo?id=";
-
     @GET("all-mv")
     Observable<String> allMovieStr(
 
@@ -19,7 +17,14 @@ public interface MovieAPI {
 
     @GET("thInfo")
     Observable<String> getTheaterInfoStr(
-            @Field("id")
+            @Query("id")
+                    String id
+    );
+
+
+    @GET("mvInfo")
+    Observable<String> getMvInfoStr(
+            @Query("id")
                     String id
     );
 

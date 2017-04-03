@@ -131,20 +131,17 @@ public class MainActivity extends AppCompatActivity {
         newtonCradleLoading.start();
         info_text.setText(R.string.init_data_ing);
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        AssetsHelper asHelper = new AssetsHelper(this, dbHelper);
+        AssetsHelper assetsHelper = new AssetsHelper(this, dbHelper);
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            try {
-                asHelper.loadTheaterData(db);
-                db.setTransactionSuccessful();
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
+            assetsHelper.loadTheaterData(db);
+            db.setTransactionSuccessful();
+            return true;
+        } catch (IOException e) {
+            Log.e(TAG, e.toString());
         } finally {
-
             db.endTransaction();
             db.close();
         }
@@ -158,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
             if (initiateApp()) {
                 Log.i(TAG, "Initiate successfully");
                 prefHelper.setFirstTime(false);
-
             } else {
                 Log.e(TAG, "Initiate unsuccessfully");
             }
@@ -179,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
             //  Toast.makeText(this, "refresh", Toast.LENGTH_SHORT).show();
             //  makeJsonArrayRequest();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -254,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = getIntent();
                         String mvId = intent.getStringExtra("mvId");
                         if (mvId != null) {
-                            Log.d("FCM", "mvId:" + mvId);
+                            //Log.d("FCM", "mvId:" + mvId);
                             Intent i = new Intent();
                             i.setClass(context, MovieInfoActivity.class);
                             i.putExtra("mvId", mvId);
@@ -329,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
 
                         GAEId = obj.getJSONObject("key").getString("id");
-                        Log.i(TAG, " GAEId" + GAEId);
+                        // Log.i(TAG, " GAEId" + GAEId);
                         playingMvId.add(GAEId);
 
                         for (String unit : DatabaseHelper.COL_MOVIE) {
