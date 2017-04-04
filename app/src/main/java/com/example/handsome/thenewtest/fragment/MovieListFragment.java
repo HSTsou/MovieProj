@@ -34,13 +34,12 @@ import java.util.List;
  */
 public class MovieListFragment extends Fragment {
 
-  //  public final static String ITEMS_COUNT_KEY = "PartThreeFragment$ItemsCount";
+  //public final static String ITEMS_COUNT_KEY = "PartThreeFragment$ItemsCount";
     Context c;
     List<Movie> mvList_fragment;
     private SharedPreferencesHelper prefHelper;
-    public static MovieListFragment createInstance(String state) {
 
-        Log.i("hs", "createInstance!" + state);
+    public static MovieListFragment createInstance(String state) {
         MovieListFragment f = new MovieListFragment();
         Bundle bundle = new Bundle();
       //  bundle.putInt(ITEMS_COUNT_KEY, itemsCount);//
@@ -55,7 +54,6 @@ public class MovieListFragment extends Fragment {
         super.onCreate(savedInstanceState);
        prefHelper = new SharedPreferencesHelper(getActivity());
     }
-
 
     @Nullable
     @Override
@@ -79,8 +77,6 @@ public class MovieListFragment extends Fragment {
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                Log.i("hs", "position = " + position);
-                // Log.i("hs", "item = " + allData.get(position));
                 Intent i = new Intent();
                 i.setClass(getActivity(), MovieInfoActivity.class);
                 i.putExtra("mvId",  mvList_fragment.get(position).getGaeId());
@@ -94,22 +90,18 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i("hs", "onViewCreated");
-
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         MovieListAdapter recyclerAdapter = new MovieListAdapter(getContext(), setMvDataListFromDB());//put Data in here
-
         recyclerView.setAdapter(recyclerAdapter);
     }
 
 
 
     List<Movie> setMvDataListFromDB(){
-        List<Movie> mvList = new  ArrayList<Movie>();
+        List<Movie> mvList = new  ArrayList<>();
         DatabaseHelper helper = new DatabaseHelper(getActivity());
         SQLiteDatabase db = helper.getWritableDatabase();
 

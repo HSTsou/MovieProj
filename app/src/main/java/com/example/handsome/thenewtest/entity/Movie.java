@@ -9,11 +9,9 @@ import java.util.List;
  * Created by handsome on 2015/9/16.
  */
 public class Movie implements Parcelable {
+
     public Movie(){
-
     }
-
-
 
     private String gaeId;
     private String state;

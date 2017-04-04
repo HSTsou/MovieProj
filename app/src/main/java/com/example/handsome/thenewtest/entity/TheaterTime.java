@@ -7,8 +7,8 @@ import android.os.Parcelable;
  * Created by handsome on 2015/10/30.
  */
 public class TheaterTime implements Parcelable {
-    String thDate;
-    String allThTimeStr;
+    private String thDate;
+    private String allThTimeStr;
 
     public TheaterTime(){
 

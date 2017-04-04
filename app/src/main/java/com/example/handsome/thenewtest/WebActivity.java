@@ -18,10 +18,8 @@ import android.widget.ProgressBar;
  */
 public class WebActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
-
-
-    String url;
+    private Toolbar toolbar;
+    private String url;
     private WebView webView;
     private FrameLayout customViewContainer;
     private WebChromeClient.CustomViewCallback customViewCallback;
@@ -30,14 +28,12 @@ public class WebActivity extends AppCompatActivity {
     private myWebViewClient mWebViewClient;
     private ProgressBar progressBar;
 
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         progressBar = (ProgressBar) findViewById(R.id.progressbar);
-
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -66,8 +62,6 @@ public class WebActivity extends AppCompatActivity {
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setSaveFormData(true);
         webView.loadUrl(url);
-
-
     }
 
     public boolean inCustomView() {
@@ -208,7 +202,6 @@ public class WebActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
@@ -226,8 +219,4 @@ public class WebActivity extends AppCompatActivity {
         // Restore the state of the WebView
         webView.restoreState(savedInstanceState);
     }
-
-
-
-
 }

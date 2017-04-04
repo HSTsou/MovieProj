@@ -40,12 +40,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 
 public class MainActivity extends AppCompatActivity {
 
     static final String MM_URL = "https://movingmoviezero.appspot.com/";
     final static String TAG = "hs";
-    Context context;
+    private Context context;
     private SharedPreferencesHelper prefHelper;
 
     private List<String> playingMvId;//無入用
@@ -53,9 +59,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView info_text;
     private NewtonCradleLoading newtonCradleLoading;
     private SwipeRefreshLayout swipeView;
-    DatabaseHelper helper ;
+    private DatabaseHelper helper;
+    private SQLiteDatabase db;
 
-    SQLiteDatabase db ;
+    Subscription mGetMovieInfoJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
         swipeView.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(context, R.color.black));
         swipeView.setColorSchemeResources(
-                R.color.white,R.color.lake_green
-                );
+                R.color.white, R.color.lake_green
+        );
 
         swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -86,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
                 getAllMvInfoByJSON();
             }
         });
-
 
 
         if (prefHelper.isFirstTime()) {//initiate the theater data.
@@ -101,19 +107,20 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "notFirstTime");
             clearTable();
         }
+        getAllMovieInfoByRxJava();
     }
 
     /**
      * 目前是一進入清空資料庫，
      */
     public void clearTable() {
-       // SQLiteDatabase db = helper.getWritableDatabase();
+        // SQLiteDatabase db = helper.getWritableDatabase();
         db.delete(DatabaseHelper.Movie.TABLE_NAME, null, null);
         Log.i(TAG, "delete MOVIE.TABLE ");
     }
 
 
-    public void clearMovieWithoutFav(){
+    public void clearMovieWithoutFav() {
         //取出sqlite all mvId
         //比對sharedperference or sqlite , 刪除沒有加入最愛的資料
         //直接用sharedperference存ID，再去GAE要電影資料，省去更新電影新資訊
@@ -124,20 +131,17 @@ public class MainActivity extends AppCompatActivity {
         newtonCradleLoading.start();
         info_text.setText(R.string.init_data_ing);
         DatabaseHelper dbHelper = new DatabaseHelper(this);
-        AssetsHelper asHelper = new AssetsHelper(this, dbHelper);
+        AssetsHelper assetsHelper = new AssetsHelper(this, dbHelper);
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            try {
-                asHelper.loadTheaterData(db);
-                db.setTransactionSuccessful();
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
+            assetsHelper.loadTheaterData(db);
+            db.setTransactionSuccessful();
+            return true;
+        } catch (IOException e) {
+            Log.e(TAG, e.toString());
         } finally {
-
             db.endTransaction();
             db.close();
         }
@@ -151,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
             if (initiateApp()) {
                 Log.i(TAG, "Initiate successfully");
                 prefHelper.setFirstTime(false);
-
             } else {
                 Log.e(TAG, "Initiate unsuccessfully");
             }
@@ -172,8 +175,54 @@ public class MainActivity extends AppCompatActivity {
             //  Toast.makeText(this, "refresh", Toast.LENGTH_SHORT).show();
             //  makeJsonArrayRequest();
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getAllMovieInfoByRxJava() {
+        info_text.setText(R.string.update_data_ing);
+
+        MovieAPI mvApi = ServiceGenerator.createService(MovieAPI.class);
+        Observable<String> call = mvApi.allMovieStr();
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        newtonCradleLoading.stop();
+                        swipeView.setRefreshing(false);
+                        info_text.setText(R.string.update_data_finish);
+
+                        Intent i = getIntent();
+                        String mvId = i.getStringExtra("mvId");//check firebase messaging including mvId or not, if yes turn into that movie page.
+                        if (mvId != null) {
+                            i.setClass(context, MovieInfoActivity.class);
+                            i.putExtra("mvId", mvId);
+                            startActivity(i);
+                        } else {
+                            startActivity(new Intent(MainActivity.this,
+                                    MovieListActivity.class));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        info_text.setText(R.string.update_data_error);
+                        swipeView.setRefreshing(false);
+                        error.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(String jsonArray) {
+                        try {
+                            JSONArray json = new JSONArray(jsonArray);
+                            if (parseMvJsonAndStore(json)) {
+                                Log.i(TAG, "movie Done ");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     private void getAllMvInfoByJSON() {
@@ -199,13 +248,13 @@ public class MainActivity extends AppCompatActivity {
                         //check firebase messaging including mvId, if turn into this movie page.
                         Intent intent = getIntent();
                         String mvId = intent.getStringExtra("mvId");
-                        if (mvId!=null){
-                            Log.d("FCM", "mvId:"+mvId);
+                        if (mvId != null) {
+                            //Log.d("FCM", "mvId:" + mvId);
                             Intent i = new Intent();
                             i.setClass(context, MovieInfoActivity.class);
                             i.putExtra("mvId", mvId);
                             startActivity(i);
-                        }else{
+                        } else {
                             startActivity(new Intent(MainActivity.this,
                                     MovieListActivity.class));
                         }
@@ -245,8 +294,10 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         try {
-            getAllMvInfoByJSON();
+            //getAllMvInfoByJSON();
             //getAllThTimeByJSON();
+
+
         } finally {
             // db.close();
         }
@@ -271,8 +322,9 @@ public class MainActivity extends AppCompatActivity {
 
                     String GAEId = null;
                     try {
+
                         GAEId = obj.getJSONObject("key").getString("id");
-                        //Log.i(TAG, " GAEId" + GAEId);
+                        // Log.i(TAG, " GAEId" + GAEId);
                         playingMvId.add(GAEId);
 
                         for (String unit : DatabaseHelper.COL_MOVIE) {
@@ -322,40 +374,4 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
-
-
-   /* private class MyAsyncTask extends AsyncTask<JSONArray, Integer, String> {
-        //private ProgressDialog dialog;
-
-
-        @Override
-        protected void onPreExecute() {
-            pDialog = ProgressDialog.show(MainActivity.this, null, null);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(JSONArray... response) {
-
-            return "ok";
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            pDialog.setProgress(progress[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if(result.equalsIgnoreCase("ok")){
-                hidepDialog();
-                startActivity(new Intent(MainActivity.this,
-                        MovieListActivity.class));
-            }
-
-        }
-
-    }*/
-
-
 }

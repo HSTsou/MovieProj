@@ -22,9 +22,9 @@ import java.util.List;
 public class TheaterTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<String[]>  mvUnitList;
-    Context context ;
-    View view;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private Context context ;
+    private View view;
+    private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
     public TheaterTimeAdapter(List<String[]>  mvUnitList) {
         this.mvUnitList =  mvUnitList ;
     }
@@ -85,9 +85,6 @@ public class TheaterTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             version = (TextView) parent.findViewById(R.id.version_text);
             stLayout = (TableLayout) parent.findViewById(R.id.time_table_layout);
         }
-
-
-
     }
 
     public View setTimeText( String  text) {

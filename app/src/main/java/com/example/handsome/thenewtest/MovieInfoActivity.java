@@ -26,10 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.handsome.thenewtest.entity.Movie;
 import com.example.handsome.thenewtest.fragment.MovieInfoFragment;
@@ -37,7 +34,6 @@ import com.example.handsome.thenewtest.fragment.MovieTimeTabFragment;
 import com.example.handsome.thenewtest.helper.DatabaseHelper;
 import com.example.handsome.thenewtest.helper.JSONHelper;
 import com.example.handsome.thenewtest.util.AppController;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -48,27 +44,33 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 
 public class MovieInfoActivity extends AppCompatActivity {
 
-    static final String MV_INFO_URL = "https://movingmoviezero.appspot.com/mvInfo?id=";
-    CoordinatorLayout rootLayout;
-    DrawerLayout drawerLayout;
-    ActionBarDrawerToggle drawerToggle;
-    FloatingActionButton fabBtn;
-    Toolbar toolbar;
-    TabLayout tabLayout;
-    CollapsingToolbarLayout collapsingToolbarLayout;
-    NetworkImageView mv_pic;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-    String title, url;
-    DatabaseHelper helper ;
-    SQLiteDatabase db;
-    Context c;
-    Movie m;
-    String mvId;//accurately,  gatId of movie
-    String youtubeThumbnail_Url = "http://img.youtube.com/vi/%s/0.jpg"; //0 : larger img, 1,2,3 different image but small.
-    String vId ="";
+    private static final String MV_INFO_URL = "https://movingmoviezero.appspot.com/mvInfo?id=";
+    private CoordinatorLayout rootLayout;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private FloatingActionButton fabBtn;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private NetworkImageView mvPic;
+    private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private String title, url;
+    private DatabaseHelper helper;
+    private SQLiteDatabase db;
+    private Context c;
+    private Movie m;
+    private String mvId;//accurately,  gatId of movie
+    private String youtubeThumbnail_Url = "http://img.youtube.com/vi/%s/0.jpg"; //0 : larger img, 1,2,3 different image but small.
+    private String videoId = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +81,8 @@ public class MovieInfoActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             // Restore value of members from saved state
-           mvId = savedInstanceState.getString("mvId");
-           Log.i("hs", "savedInstanceState.getString(\"mvId\")" + mvId);
+            mvId = savedInstanceState.getString("mvId");
+            Log.i("hs", "savedInstanceState.getString(\"mvId\")" + mvId);
 
             initToolBar();
             initNavigation();
@@ -94,59 +96,94 @@ public class MovieInfoActivity extends AppCompatActivity {
             mvId = getIntent().getStringExtra("mvId");
             initToolBar();
             initNavigation();
-            getMovieInfoByJson();
+            //getMovieInfoByJson();
+            getMovieInfoByRxJava();
         }
 
 
     }
 
-    void parseMvInfoJsonAndStore(JSONObject response){
+    void parseMvInfoJsonAndStore(JSONObject response) {
         Log.i("hs", "parseMvInfoJsonAndStore");
 
-            try {
-                JSONObject obj = response;
+        try {
+            JSONObject obj = response;
 
-                ContentValues cv = new ContentValues();
+            ContentValues cv = new ContentValues();
 
-                String GAEId = obj.getJSONObject("key").getString("id");
-                cv.put(DatabaseHelper.Movie.ID, GAEId);
+            String GAEId = obj.getJSONObject("key").getString("id");
+            cv.put(DatabaseHelper.Movie.ID, GAEId);
 
-                for(String unit : DatabaseHelper.COL_MOVIE){
-                    if(!obj.isNull(unit)){
-                        if(unit == "playingDate"){
-                            String formatPlayingDate = obj.getString(unit).replaceAll("/", "-");
-                            cv.put(unit, formatPlayingDate);
-                            continue;
-                        }
-                        cv.put(unit, obj.getString(unit));
-                    }else{
-                        cv.putNull(unit);
+            for (String unit : DatabaseHelper.COL_MOVIE) {
+                if (!obj.isNull(unit)) {
+                    if (unit == "playingDate") {
+                        String formatPlayingDate = obj.getString(unit).replaceAll("/", "-");
+                        cv.put(unit, formatPlayingDate);
+                        continue;
                     }
+                    cv.put(unit, obj.getString(unit));
+                } else {
+                    cv.putNull(unit);
                 }
-
-                Gson gson = new Gson();
-                if(!obj.isNull(DatabaseHelper.Movie.YOUTUBE_URL_LIST)){
-                    String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.YOUTUBE_URL_LIST)));
-                    cv.put(DatabaseHelper.Movie.YOUTUBE_URL_LIST, youtubeListString);
-                }
-                if(!obj.isNull(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)) {
-                    String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)));
-                    cv.put(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
-                }
-
-                helper.insertMovieInfo(db, cv);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.i("hs", " getAllMvInfo JSONException" + e);
-
             }
+
+            Gson gson = new Gson();
+            if (!obj.isNull(DatabaseHelper.Movie.YOUTUBE_URL_LIST)) {
+                String youtubeListString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.YOUTUBE_URL_LIST)));
+                cv.put(DatabaseHelper.Movie.YOUTUBE_URL_LIST, youtubeListString);
+            }
+            if (!obj.isNull(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)) {
+                String mvThTimeString = gson.toJson(JSONHelper.getStringListFromJsonArray(obj.getJSONArray(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST)));
+                cv.put(DatabaseHelper.Movie.ALL_MV_TH_SHOWTIME_LIST, mvThTimeString);
+            }
+
+            helper.insertMovieInfo(db, cv);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.i("hs", " getAllMvInfo JSONException" + e);
+
+        }
 
 
     }
 
+    void getMovieInfoByRxJava() {
+        MovieAPI mvApi = ServiceGenerator.createService(MovieAPI.class);
+        Observable<String> call = mvApi.getMvInfoStr(mvId);
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
 
-    void getMovieInfoByJson(){
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        Toast.makeText(getApplicationContext(),
+                                R.string.beautiful_error, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(String jsonObj) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(jsonObj);
+                            parseMvInfoJsonAndStore(jsonObject);
+
+                            m = loadMvInfoFromDB(mvId);
+                            title = m.getMvName();
+                            url = m.getImgLink();
+                            setTrailerPic();
+                            initInstances();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+  /*  void getMovieInfoByJson() {
 
         JsonObjectRequest req = new JsonObjectRequest(MV_INFO_URL + mvId,
                 new Response.Listener<JSONObject>() {
@@ -176,9 +213,9 @@ public class MovieInfoActivity extends AppCompatActivity {
         });
 
         AppController.getInstance().addToRequestQueue(req);
-    }
+    }*/
 
-    public Movie loadMvInfoFromDB(String mvId){
+    public Movie loadMvInfoFromDB(String mvId) {
         DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -205,7 +242,8 @@ public class MovieInfoActivity extends AppCompatActivity {
             Log.i("hs", "IMDB  = " + Double.parseDouble(c.getString(14)));
             Log.i("hs", "tomato  = " + Double.parseDouble(c.getString(15)));
             Gson gson = new Gson();
-            Type type = new TypeToken<List<String>>() {}.getType();
+            Type type = new TypeToken<List<String>>() {
+            }.getType();
             List<String> mvTimeInfoStr_List = gson.fromJson(c.getString(16), type);
             List<String> youtube_List = gson.fromJson(c.getString(17), type);
             mv.setAllMvThShowtimeList(mvTimeInfoStr_List);
@@ -219,40 +257,40 @@ public class MovieInfoActivity extends AppCompatActivity {
         return mv;
     }
 
-    private void setTrailerPic(){
+    private void setTrailerPic() {
         List<String> utubeUrlList = m.getYoutubeUrlList();
 
         String utubeUrl;
-        if(utubeUrlList.size() >0){
+        if (utubeUrlList.size() > 0) {
             /*for(String url : utubeUrlList){
                 JSONObject obj = new JSONObject(url);//in the GAE, if using TEXT type, it will return redundant {"value":"XXXX"}..mabye...
                 utubeUrl =  obj.getString("value");
                 Log.i("hs", "UtubeUrl = " +  obj.getString("value"));
             }*/
 
-            try{
+            try {
                 JSONObject obj = new JSONObject(utubeUrlList.get(0));
-                utubeUrl =  obj.getString("value");
-                vId = utubeUrl.substring(utubeUrl.lastIndexOf("/")+1);//ex: "https://www.youtube.com/embed/2S05N0PYYas"
-            }catch(JSONException e){
+                utubeUrl = obj.getString("value");
+                videoId = utubeUrl.substring(utubeUrl.lastIndexOf("/") + 1);//ex: "https://www.youtube.com/embed/2S05N0PYYas"
+            } catch (JSONException e) {
                 Log.i("hs", "utubeUrl JSONException" + e);
             }
 
         }
 
 
-        mv_pic = (NetworkImageView) findViewById(R.id.mv_pic);
-        mv_pic.setImageUrl(String.format(youtubeThumbnail_Url, vId), imageLoader);
-        mv_pic.setOnClickListener(new View.OnClickListener() {
+        mvPic = (NetworkImageView) findViewById(R.id.mv_pic);
+        mvPic.setImageUrl(String.format(youtubeThumbnail_Url, videoId), imageLoader);
+        mvPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                /* final Intent lightboxIntent = new Intent(c, CustomLightboxActivity.class);
-                lightboxIntent.putExtra(CustomLightboxActivity.KEY_VIDEO_ID, vId);
+                lightboxIntent.putExtra(CustomLightboxActivity.KEY_VIDEO_ID, videoId);
                 startActivity(lightboxIntent);*/
                 Intent web = new Intent(c, WebActivity.class);
                 String youtube = "https://www.youtube.com/watch?v=";
-                web.putExtra("url", youtube+vId);
+                web.putExtra("url", youtube + videoId);
                 startActivity(web);
             }
         });
@@ -287,7 +325,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         //rootLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
     }
 
-    private void initNavigation(){
+    private void initNavigation() {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         drawerToggle = new ActionBarDrawerToggle(MovieInfoActivity.this, drawerLayout, R.string.app_name, R.string.app_name);
         drawerLayout.setDrawerListener(drawerToggle);
@@ -327,7 +365,7 @@ public class MovieInfoActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(MovieInfoFragment.createInstance(m), getString(R.string.movie_info));
 
-        adapter.addFrag(MovieTimeTabFragment.createInstance((ArrayList)m.getAllMvThShowtimeList()), getString(R.string.movie_time));
+        adapter.addFrag(MovieTimeTabFragment.createInstance((ArrayList) m.getAllMvThShowtimeList()), getString(R.string.movie_time));
         viewPager.setAdapter(adapter);
     }
 
@@ -361,7 +399,6 @@ public class MovieInfoActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -377,7 +414,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.menu_main, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -400,11 +437,10 @@ public class MovieInfoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.i("hs", "onSaveInstanceState" );
-        outState.putString("mvId", mvId );
+        Log.i("hs", "onSaveInstanceState");
+        outState.putString("mvId", mvId);
     }
 
     @Override
@@ -441,6 +477,7 @@ public class MovieInfoActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.i("hs", "onRestoreInstanceState");
-        Log.i("hs", "savedInstanceState.get(\"mvId\") = " + savedInstanceState.get("mvId"));;
+        Log.i("hs", "savedInstanceState.get(\"mvId\") = " + savedInstanceState.get("mvId"));
+        ;
     }
 }

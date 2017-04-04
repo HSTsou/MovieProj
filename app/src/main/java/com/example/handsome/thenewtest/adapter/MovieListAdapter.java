@@ -22,16 +22,13 @@ import java.util.List;
  */
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
 
-
     private Context context;
     private ViewHolder viewHolder;
     public  List<Movie> allData = new ArrayList<Movie>();
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-
+    private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     public MovieListAdapter(Context context, List<Movie> allData) {
         //super(context, 0, allData);
-
         this.context = context;
         this.allData = allData;
     }
@@ -117,10 +114,5 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         }
         */
     }
-
-
-
-
-
 }
 

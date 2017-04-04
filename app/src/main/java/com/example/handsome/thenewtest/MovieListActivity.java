@@ -14,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -82,10 +81,8 @@ public class MovieListActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-
         //setTitle(getString(R.string.app_name));
-      //  mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
+        //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
     }
 
     private void initViewPagerAndTabs() {
@@ -105,8 +102,6 @@ public class MovieListActivity extends AppCompatActivity {
 
     }
 
-
-
     static class PagerAdapter extends FragmentPagerAdapter {// FragmentStatePagerAdapter
 
         private final List<Fragment> fragmentList = new ArrayList<>();
@@ -124,7 +119,7 @@ public class MovieListActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Log.i("hs", "MovieListFragment.getInstance(position);");
+            //Log.i("hs", "MovieListFragment.getInstance(position);");
             return fragmentList.get(position);
 
            //return MovieListFragment.getInstance(position);
@@ -164,12 +159,9 @@ public class MovieListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item))
             return true;
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.menu_refresh) {
             return true;
         }

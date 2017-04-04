@@ -24,14 +24,14 @@ import com.example.handsome.thenewtest.util.AppController;
  */
 public class MovieInfoFragment extends Fragment implements View.OnClickListener {
 
-    TextView gate, story, length, director, actor, writer, playingDate, enName;
-    NetworkImageView pic;
-    Boolean isTextViewClicked = false;
-    ImageButton IMDb_btn, Tomato_btn;
-    TextView IMDbRating, tomatoRating;
-    Movie mv;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-    String IMDbUrl, tomatoesUrl;
+    private TextView gate, story, length, director, actor, writer, playingDate, enName;
+    private NetworkImageView pic;
+    private Boolean isTextViewClicked = false;
+    private ImageButton IMDb_btn, Tomato_btn;
+    private TextView IMDbRating, tomatoRating;
+    private Movie mv;
+    private ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private String IMDbUrl, tomatoesUrl;
 
     public static MovieInfoFragment createInstance(Movie m) {
         Log.i("hs", "MovieInfoFragment createInstance ");
