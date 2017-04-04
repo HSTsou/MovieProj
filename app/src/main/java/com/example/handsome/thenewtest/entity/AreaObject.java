@@ -4,8 +4,8 @@ package com.example.handsome.thenewtest.entity;
  * Created by handsome on 2015/10/24.
  */
 public class AreaObject {
-    String AreaName;
-    String AreaId;
+    private String AreaName;
+    private String AreaId;
 
     public String getAreaName() {
         return AreaName;

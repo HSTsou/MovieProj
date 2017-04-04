@@ -23,11 +23,8 @@ public class TheaterListAdapter extends  RecyclerView.Adapter<TheaterListAdapter
 
     public List<Map<String, String>> allData ;
 
-
-
     public TheaterListAdapter(Context context, List<Map<String, String>> allData ) {
         //super(context, 0, allData);
-
         this.context = context;
         this.allData = allData;
     }

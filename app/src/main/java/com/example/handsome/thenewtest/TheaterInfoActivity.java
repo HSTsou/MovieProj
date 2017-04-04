@@ -26,15 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.example.handsome.thenewtest.entity.TheaterTime;
 import com.example.handsome.thenewtest.fragment.TheaterTimeFragment;
 import com.example.handsome.thenewtest.helper.DatabaseHelper;
 import com.example.handsome.thenewtest.helper.JSONHelper;
 import com.example.handsome.thenewtest.model.TheaterInfo;
-import com.example.handsome.thenewtest.util.AppController;
 import com.example.handsome.thenewtest.util.RegexUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -162,7 +158,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
                 });
     }
 
-    void getTheaterTimeByJson(String thId) {
+    /*void getTheaterTimeByJson(String thId) {
         JsonArrayRequest req = new JsonArrayRequest(TH_TIME_URL + thId,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -182,7 +178,7 @@ public class TheaterInfoActivity extends AppCompatActivity {
         });
 
         AppController.getInstance().addToRequestQueue(req);
-    }
+    }*/
   /*  @Override
     public void onMapReady(GoogleMap googleMap) {
 

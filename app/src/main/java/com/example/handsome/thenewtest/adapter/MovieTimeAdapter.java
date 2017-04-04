@@ -38,9 +38,6 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             view = LayoutInflater.from(context).inflate(R.layout.content_no_time, parent, false);
             return null;
         }
-
-
-
     }
 
     @Override
@@ -58,9 +55,6 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }else{
 
         }
-
-
-
     }
 
     @Override
@@ -89,8 +83,6 @@ public class MovieTimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             stLayout = (TableLayout) parent.findViewById(R.id.time_table_layout);
 
         }
-
-
     }
 
     public View setTimeText(String text) {

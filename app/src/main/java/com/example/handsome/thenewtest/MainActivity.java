@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     static final String MM_URL = "https://movingmoviezero.appspot.com/";
     final static String TAG = "hs";
-    Context context;
+    private Context context;
     private SharedPreferencesHelper prefHelper;
 
     private List<String> playingMvId;//無入用
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView info_text;
     private NewtonCradleLoading newtonCradleLoading;
     private SwipeRefreshLayout swipeView;
-    DatabaseHelper helper;
-    SQLiteDatabase db;
+    private DatabaseHelper helper;
+    private SQLiteDatabase db;
 
     Subscription mGetMovieInfoJson;
 

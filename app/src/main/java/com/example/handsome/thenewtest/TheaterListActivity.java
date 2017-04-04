@@ -58,13 +58,10 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
     private ProgressDialog progressDialog;
     private List<Map<String, String>> data;
     private SharedPreferencesHelper prefHelper;
-
-
-    String areaId, areaName;
-
+    private String areaId, areaName;
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    DrawerLayout drawerLayout;
-    ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
 
     private Location mLastLocation;
     // Google client to interact with Google API
@@ -89,9 +86,7 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
         context = this;
         setContentView(R.layout.activity_th_list);
 
-
         MapsInitializer.initialize(this);
-
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -112,16 +107,13 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
             displayLocation();
         }
         //togglePeriodicLocationUpdates();
-
     }
-
 
     private void initNavigation() {
         drawerLayout = (DrawerLayout) findViewById(R.id.thlist_drawerLayout);
         drawerToggle = new ActionBarDrawerToggle(TheaterListActivity.this, drawerLayout, R.string.app_name, R.string.app_name);
         drawerLayout.setDrawerListener(drawerToggle);
         drawerLayout.setFitsSystemWindows(true);
-
 
         NavigationView navigation;
         navigation = (NavigationView) findViewById(R.id.navigation);
@@ -162,7 +154,6 @@ public class TheaterListActivity extends AppCompatActivity implements GoogleApiC
         //setTitle(getString(R.string.app_name));
         //mToolbar.setTitleTextColor(ContextCompat.getColor(this, R.));
     }
-
 
     /**
      * Method to verify google play services on the device

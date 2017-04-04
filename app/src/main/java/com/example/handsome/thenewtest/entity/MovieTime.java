@@ -7,11 +7,11 @@ import android.os.Parcelable;
  * Created by handsome on 2015/10/22.
  */
 public class MovieTime implements Parcelable{
-    String area;
-    String thId;
-    String thName;
-    String hall;
-    String timeStr;
+    private String area;
+    private String thId;
+    private String thName;
+    private String hall;
+    private String timeStr;
 
     protected MovieTime(Parcel in) {
         area = in.readString();

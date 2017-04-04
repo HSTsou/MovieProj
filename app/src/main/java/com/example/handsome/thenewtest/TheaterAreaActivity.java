@@ -26,11 +26,11 @@ import java.util.List;
  */
 public class TheaterAreaActivity extends AppCompatActivity{
 
-    DrawerLayout drawerLayout;
-    ActionBarDrawerToggle drawerToggle;
-    Context context;
-    NestedScrollView nestedScrollview;
-    InnerGridView gridview;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private Context context;
+    private NestedScrollView nestedScrollview;
+    private InnerGridView gridview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
